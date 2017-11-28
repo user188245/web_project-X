@@ -2,3 +2,5 @@
 웹프로젝트 (팀 X)
 
 django_server branch
+
+hahahaha
