@@ -1,31 +1,49 @@
 div.weeklyTimeTable{
 
-    --topHeaderFillColor: #fcc64580;
-    --topHeaderLineColor: #40404030;
-    --topHeaderFont: 9px sans-serif;
-    --topHeaderTextColor: Purple;
-
-    --xHeaderFillColor: #fcc64520;
-    --xHeaderLineColor: #40404030;
-    --xHeaderFont: 9px Arial;
-    --xHeaderTextColor: Blue;
-
-    --yHeaderFillColor: #f2fc9d;
-    --yHeaderLineColor: #40404030;
-    --yHeaderFont: italic bold 10px serif;
-    --yHeaderTextColor: Red;
-
-    --tableFillColor: #a2d6ea20;
-    --tableLineColor: #40404030;
-
-    --fixed-width: 400;
-    --fixed-height: 600;
-
-    width: 400px;
-    height: 600px;
-
-
     margin: 10px;
 
 }
 
+div.weeklyTimeTable rect.topHeader{
+    fill: #fcc64580;
+    stroke: #40404030;
+    stroke-width:1;
+}
+
+div.weeklyTimeTable text.topHeader{
+    font-size: 9px;
+    font-family: sans-serif;
+    fill: Purple;
+}
+
+div.weeklyTimeTable rect.xHeader{
+    fill: #f2fc9d;
+    stroke: #40404030;
+    stroke-width:1;
+}
+
+div.weeklyTimeTable text.xHeader{
+    font-size: 9px;
+    font-family: Arial;
+    fill: Blue;
+}
+
+div.weeklyTimeTable rect.yHeader{
+    fill: #f2fc9d;
+    stroke: #40404030;
+    stroke-width:1;
+}
+
+div.weeklyTimeTable text.yHeader{
+    font-size: 10px;
+    font-weight: bold;
+    font-style: italic;
+    font-family: serif;
+    fill: Red;
+}
+
+div.weeklyTimeTable rect.table{
+    fill: #a2d6ea20;
+    stroke: #40404030;
+    stroke-width:1;
+}

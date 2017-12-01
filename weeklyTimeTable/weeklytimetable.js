@@ -2,13 +2,14 @@
 var Week = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
 var Month= ["January","February","March","April","May","June","July","August","September","October","November","December"];
 
-
+var xmlns = "http://www.w3.org/2000/svg";
 
 
 
 
 
 /*
+
 
  */
 function getTime(hour,minute){
@@ -28,7 +29,6 @@ function getTime(hour,minute){
 }
 
 function getFormattedDate(date) {
-
     return Month[date.getMonth()] + "," + date.getDate() + "," + date.getFullYear();
 }
 
@@ -47,35 +47,33 @@ function Lecture(name,instructor,separatingColor){
     this.instructor = instructor;
     this.separatingColor = separatingColor;
     this.scheduleList = [];
-    this.exceptionalScheduleList = [];
 }
 
-function RegularSchedule(scheduleTime,name,location){
+Lecture.prototype = {
+	addRegularSchedule:function(regularSchedule){
+		this.scheduleList.add(regularSchedule);
+	},
+	addRegularScheduleCustom:function(start_hour,start_min,end_hour,end_min,week,location){
+	    this.scheduleList.add(new RegularSchedule(new ScheduleTime(start_hour,start_min,end_hour,end_min), week, location));
+    }
+};
 
+function RegularSchedule(scheduleTime,week,location){
+	this.scheduleTime = scheduleTime;
+	this.week = week;
+	this.location = location;
 }
 
-/*
- *
- * option:
- *  Postponed/Canceled : 0
- *  Temporary Schedule : 1
- *
- */
-function ExceptionalSchedule(scheduleTime,name,location,option){
-
-
-}
 
 
 
 function WeeklyTimeTable(timeTable,tableName){
 
-    this.canvas = document.createElement("canvas");
+    this.svg = document.createElementNS(xmlns,"svg");
     this.style = window.getComputedStyle(timeTable,null);
-    this.width = this.style.getPropertyValue("--fixed-width");
-    this.height= this.style.getPropertyValue("--fixed-height");
-    this.canvas.style.width = this.style.getPropertyValue("width");
-    this.canvas.style.height = this.style.getPropertyValue("height");
+
+    this.width = timeTable.getAttribute("width");
+    this.height= timeTable.getAttribute("height");
 
     /*tentative value*/
     this.startTime = 7;
@@ -89,11 +87,11 @@ function WeeklyTimeTable(timeTable,tableName){
 
     /*definitive value*/
     this.tableName = tableName;
-    this.canvas.width = this.width;
-    this.canvas.height= this.height;
+    this.svg.setAttribute("width",this.width.toString());
+    this.svg.setAttribute("height",this.height.toString());
 
     this.setDefaultEventListener();
-    timeTable.appendChild(this.canvas);
+    timeTable.appendChild(this.svg);
 
 }
 WeeklyTimeTable.prototype = {
@@ -105,87 +103,61 @@ WeeklyTimeTable.prototype = {
         this.refresh();
     },
     refresh: function () {
-        this.width = this.style.getPropertyValue("--fixed-width");
-        this.height= this.style.getPropertyValue("--fixed-height");
-        var ctx = this.canvas.getContext("2d");
-        var headHeight = (this.height)/this.count;
+        var rect;
+        var headHeight = (this.height)/20;
         var topWidth = this.width/7;
-        var topHeight= (this.height)/this.count;
+        var topHeight= (this.height)/20;
         var xUnit = (this.width-topWidth)/7;
         var yUnit = (this.height-(topHeight+headHeight))/this.count;
         /* drawing */
-        ctx.beginPath();
-        ctx.fillStyle = this.style.getPropertyValue("--topHeaderFillColor");
-        ctx.rect(0,0,this.width,headHeight);
-        ctx.fill();
-
-        ctx.strokeStyle = this.style.getPropertyValue("--topHeaderTextColor");
-        ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
-        ctx.font = this.style.getPropertyValue("--topHeaderFont");
-        ctx.strokeText(getFormattedDate(this.date) , this.width/2,headHeight/2);
-
-        ctx.strokeStyle = this.style.getPropertyValue("--topHeaderLineColor");
-        ctx.stroke();
-
-        ctx.rect(0,headHeight,topWidth,topHeight);
+        rect = this.createRect(0,0,this.width,headHeight,"topHeader",this.svg);
+        this.createText(0,headHeight,getFormattedDate(this.date),"topHeader",rect);
+        this.createRect(0,headHeight,topWidth,topHeight,null,this.svg);
         for(var j=0; j<7; j++){
             var x = topWidth+(xUnit*j);
-            ctx.beginPath();
-            ctx.fillStyle = this.style.getPropertyValue("--xHeaderFillColor");
-            ctx.rect(x,headHeight,xUnit,topHeight);
-            ctx.fill();
-
-            ctx.strokeStyle = this.style.getPropertyValue("--xHeaderTextColor");
-            ctx.textAlign = "center";
-            ctx.textBaseline = "middle";
-            ctx.font = this.style.getPropertyValue("--xHeaderFont");
-            ctx.strokeText(Week[j] , x+xUnit/2,headHeight+topHeight/2);
-
-            ctx.strokeStyle = this.style.getPropertyValue("--xHeaderLineColor");
-            ctx.stroke();
-
+            rect = this.createRect(x,headHeight,xUnit,topHeight,"xHeader",this.svg);
+            this.createText(x,headHeight+topHeight,Week[j],"topHeader",rect);
         }
         for(var i=0; i<this.count+1; i++) {
-            ctx.beginPath();
-            ctx.fillStyle = this.style.getPropertyValue("--yHeaderFillColor");
-            ctx.rect(0,headHeight+topHeight+i*yUnit,topWidth,yUnit);
-            ctx.fill();
-            ctx.strokeStyle = this.style.getPropertyValue("--yHeaderTextColor");
-            ctx.textBaseline = "top";
-            ctx.textAlign = "right";
-            ctx.font = this.style.getPropertyValue("--yHeaderFont");
-
-            ctx.strokeText(getTime(this.startTime,this.interval*i) , topWidth,headHeight+topHeight+i*yUnit);
-            ctx.strokeStyle = this.style.getPropertyValue("--yHeaderLineColor");
-            ctx.stroke();
-
+            rect = this.createRect(0,headHeight+topHeight+i*yUnit,topWidth,yUnit,"yHeader",this.svg);
+            this.createText(0,headHeight+topHeight+(i+1)*yUnit,getTime(this.startTime,this.interval*i),"topHeader",rect);
             for(j=0; j<7; j++){
-                ctx.beginPath();
-                ctx.fillStyle = this.style.getPropertyValue("--tableFillColor");
-                ctx.rect(xUnit*j + topWidth,headHeight+topHeight+i*yUnit,xUnit,yUnit);
-                ctx.fill();
-                ctx.strokeStyle = this.style.getPropertyValue("--tableLineColor");
-                ctx.stroke();
+                rect = this.createRect(xUnit*j + topWidth,headHeight+topHeight+i*yUnit,xUnit,yUnit,"table",this.svg);
             }
         }
 
     },setDefaultEventListener: function(){
-        this.canvas.addEventListener("contextmenu",function(e){e.preventDefault();});
+        this.svg.addEventListener("contextmenu",function(e){e.preventDefault();});
     },
     setOnClickEventListener: function(event){
-        this.canvas.observe("click",event);
-    },addSchedule: function(schedule){
+        this.svg.observe("click",event);
+    },addLecture: function(lecture){
 
+    },createRect: function(x,y,width,height,className,parent){
+        var unit = document.createElementNS(xmlns,"rect");
+        if(className !== null) {
+            unit.setAttribute("class",className);
+        }
+        unit.setAttribute("x",x);
+        unit.setAttribute("y",y);
+        unit.setAttribute("width",width);
+        unit.setAttribute("height",height);
+        this.svg.appendChild(unit);
+        return unit;
+    },createText: function(x,y,text,className,parent){
+        var unit = document.createElementNS(xmlns,"text");
+        if(className !== null) {
+            unit.setAttribute("class",className);
+        }
+        unit.setAttribute("x",x);
+        unit.setAttribute("y",y);
+        var textNode = document.createTextNode(text);
+        unit.appendChild(textNode);
+        this.svg.appendChild(unit);
+
+        return unit;
     }
 };
-
-
-
-
-
-
-
 
 
 
@@ -202,9 +174,9 @@ WeeklyTimeTable.prototype = {
 
 
 document.observe('dom:loaded', function() {
-    var weeklytimeTables = $$("div.weeklyTimeTable");
-    for(var i=0; i<weeklytimeTables.length; i++) {
-        var weeklytimeTable = new WeeklyTimeTable(weeklytimeTables[i],"SAMPLE WEEKLY-TIMETABLE");
-        weeklytimeTable.onCreate(9, 22, 30,null);
+    var weeklyTimeTables = $$("div.weeklyTimeTable");
+    for(var i=0; i<weeklyTimeTables.length; i++) {
+        var weeklyTimeTable = new WeeklyTimeTable(weeklyTimeTables[i],"SAMPLE WEEKLY-TIMETABLE");
+        weeklyTimeTable.onCreate(9, 8, 30,null);
     }
 });
