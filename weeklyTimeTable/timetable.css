@@ -1,7 +1,5 @@
 div.weeklyTimeTable{
-
-    margin: 10px;
-
+    margin: 20px;
 }
 
 div.weeklyTimeTable rect.topHeader{
@@ -35,7 +33,7 @@ div.weeklyTimeTable rect.yHeader{
 }
 
 div.weeklyTimeTable text.yHeader{
-    font-size: 10px;
+    font-size: 5px;
     font-weight: bold;
     font-style: italic;
     font-family: serif;
@@ -47,3 +45,17 @@ div.weeklyTimeTable rect.table{
     stroke: #40404030;
     stroke-width:1;
 }
+
+div.weeklyTimeTable rect.lecture{
+    stroke: #404040;
+    stroke-width:1;
+}
+
+div.weeklyTimeTable text.lecture{
+    font-size: 8px;
+    font-weight: bold;
+    font-family: sans-serif;
+    fill: #7FFF00;
+
+}
+
