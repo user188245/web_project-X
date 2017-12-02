@@ -1,0 +1,27 @@
+nav, aside, article, div {
+	border: 2pt solid blue;
+}
+
+div {
+	float: right;
+	margin-top: 12px;
+}
+
+aside, article {
+	height: 600px;
+}
+
+nav {
+	margin-bottom: 10px;
+	height: 50px;
+}
+
+aside {
+	float: left;
+	width: 200px;
+
+}
+
+article {
+
+}
