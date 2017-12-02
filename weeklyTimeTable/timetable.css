@@ -1,0 +1,49 @@
+div.weeklyTimeTable{
+
+    margin: 10px;
+
+}
+
+div.weeklyTimeTable rect.topHeader{
+    fill: #fcc64580;
+    stroke: #40404030;
+    stroke-width:1;
+}
+
+div.weeklyTimeTable text.topHeader{
+    font-size: 9px;
+    font-family: sans-serif;
+    fill: Purple;
+}
+
+div.weeklyTimeTable rect.xHeader{
+    fill: #f2fc9d;
+    stroke: #40404030;
+    stroke-width:1;
+}
+
+div.weeklyTimeTable text.xHeader{
+    font-size: 9px;
+    font-family: Arial;
+    fill: Blue;
+}
+
+div.weeklyTimeTable rect.yHeader{
+    fill: #f2fc9d;
+    stroke: #40404030;
+    stroke-width:1;
+}
+
+div.weeklyTimeTable text.yHeader{
+    font-size: 10px;
+    font-weight: bold;
+    font-style: italic;
+    font-family: serif;
+    fill: Red;
+}
+
+div.weeklyTimeTable rect.table{
+    fill: #a2d6ea20;
+    stroke: #40404030;
+    stroke-width:1;
+}
