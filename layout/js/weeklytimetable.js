@@ -72,17 +72,17 @@ Lecture.prototype = {
 	addRegularSchedule:function(regularSchedule){
 		this.scheduleList.push(regularSchedule);
 	},
-	addRegularScheduleCustom:function(start_hour,start_min,end_hour,end_min,week,location,lecture){
-	    this.scheduleList.push(new RegularSchedule(new ScheduleTime(start_hour,start_min,end_hour,end_min), week, location, lecture));
+	addRegularScheduleCustom:function(start_hour,start_min,end_hour,end_min,week,location,isInactive,lecture){
+	    this.scheduleList.push(new RegularSchedule(new ScheduleTime(start_hour,start_min,end_hour,end_min), week, location, isInactive, lecture));
     }
 };
 
-function RegularSchedule(scheduleTime,week,location,lecture){
+function RegularSchedule(scheduleTime,week,location,isInactive,lecture){
 	this.scheduleTime = scheduleTime;
 	this.week = week;
 	this.location = location;
 	this.lecture = lecture;
-
+	this.isInactive = isInactive;
 }
 
 RegularSchedule.prototype = {
@@ -91,14 +91,34 @@ RegularSchedule.prototype = {
     }
 };
 
-var rectOnClickEvent = function(){
+var rectOnClickRegularEvent = function(){
     alert("Selected Lecture-Unit : " + this.schedule.toString() + " & Selected Lecture : " + this.lecture.toString());
+}
+
+var rectOnClickIrregularEvent = function(){
+    alert(this.schedule.toString());
+}
+
+
+function IrregularSchedule(name,location,scheduleTime,date,week){
+    this.name = name;
+    this.location = location;
+    this.scheduleTime = scheduleTime;
+    this.date = date;
+    this.week = week;
+}
+
+IrregularSchedule.prototype = {
+    toString : function () {
+        return this.name + "," + getFormattedDate(this.date) + "," +  this.scheduleTime.toString() +"," + this.location;
+    }
 }
 
 
 
 
-function WeeklyTimeTable(timeTable,tableName){
+
+function WeeklyTimeTable(timeTable,tableName,date,week){
 
     this.svg = document.createElementNS(xmlns,"svg");
     this.style = window.getComputedStyle(timeTable,null);
@@ -110,9 +130,11 @@ function WeeklyTimeTable(timeTable,tableName){
     this.startTime = 7;
     this.count = 24;
     this.interval = 30;
-    this.date = new Date();
+    this.date = date;
+    this.week = week;
 
     this.lectureList = [];
+    this.exceptionalList = [];
 
 
     /* */
@@ -139,6 +161,7 @@ WeeklyTimeTable.prototype = {
         while (this.svg.firstChild) {
             this.svg.removeChild(this.svg.firstChild);
         }
+        var rect;
         var headHeight = (this.height)/20;
         var topWidth = this.width/7;
         var topHeight= (this.height)/20;
@@ -150,7 +173,10 @@ WeeklyTimeTable.prototype = {
         this.createRect(0,headHeight,topWidth,topHeight,"xHeader",this.svg);
         for(var j=0; j<7; j++){
             var x = topWidth+(xUnit*j);
-            this.createRect(x,headHeight,xUnit,topHeight,"xHeader");
+            rect = this.createRect(x,headHeight,xUnit,topHeight,"xHeader");
+            if(this.week !== j){
+                rect.style.setProperty("opacity","0.4");
+            }
             this.createText(x,headHeight+topHeight,2,-2,null,null,Week[j],"xHeader");
         }
         for(var i=0; i<(this.count+1)/2; i++) {
@@ -163,7 +189,6 @@ WeeklyTimeTable.prototype = {
         var xStart = topWidth;
         var yStart = headHeight+topHeight;
         var lec;
-        var rect;
         for(i=0; i<this.lectureList.length; i++){
             lec = this.lectureList[i];
             for(j=0; j<lec.scheduleList.length; j++){
@@ -173,12 +198,31 @@ WeeklyTimeTable.prototype = {
                 var targetHeight = yUnit*sUnit.scheduleTime.getFloatTime()*(60/this.interval);
                 rect = this.createRect(xStart+xUnit*sUnit.week ,targetY,xUnit,targetHeight,"lecture");
                 rect.style.setProperty("fill",lec.separatingColor);
+                if(sUnit.isInactive){
+                    rect.style.setProperty("opacity","0.1");
+                }else{
+                    rect.style.setProperty("opacity","0.95");
+                }
                 this.createText(xStart+xUnit*sUnit.week ,targetY,0,0,null,"hanging",lec.name + "/" + sUnit.location,"lecture").setAttribute("id","import_wrap");
                 d3plus.textwrap().container("#import_wrap:last-child").resize(false).draw();
                 rect.lecture = lec;
                 rect.schedule = sUnit;
-                rect.addEventListener("click",rectOnClickEvent);
+                rect.addEventListener("click",rectOnClickRegularEvent);
             }
+        }
+        for(i=0; i<this.exceptionalList.length; i++){
+            var sUnit = this.exceptionalList[i];
+            var floatHour = sUnit.scheduleTime.getFloatTime();
+            var targetY = yStart+yUnit*(sUnit.scheduleTime.getFloatStart() - this.startTime)*(60/this.interval);
+            var targetHeight = yUnit*sUnit.scheduleTime.getFloatTime()*(60/this.interval);
+            rect = this.createRect(xStart+xUnit*sUnit.week ,targetY,xUnit,targetHeight,"lecture");
+            rect.style.setProperty("fill",createRandomColor());
+            rect.style.setProperty("opacity","0.95");
+            this.createText(xStart+xUnit*sUnit.week ,targetY,0,0,null,"hanging",sUnit.name + "/" + sUnit.location,"lecture").setAttribute("id","import_wrap");
+            d3plus.textwrap().container("#import_wrap:last-child").resize(false).draw();
+            rect.schedule = sUnit;
+            rect.addEventListener("click",rectOnClickRegularEvent);
+
         }
 
 
@@ -236,24 +280,126 @@ WeeklyTimeTable.prototype = {
 
  */
 
+var sampleJSON = "{\n" +
+    "  \"name\": \"1학기 시간표\",\n" +
+    "  \"lectureList\": [\n" +
+    "    {\n" +
+    "      \"name\": \"취침학개론\",\n" +
+    "      \"instructor\": \"최드르렁\",\n" +
+    "      \"scheduleList\": [\n" +
+    "        {\n" +
+    "          \"startHour\": 10,\n" +
+    "          \"startMinute\": 0,\n" +
+    "          \"endHour\": 11,\n" +
+    "          \"endMinute\": 30,\n" +
+    "          \"week\": 0,\n" +
+    "          \"location\": \"제1 취침관 201호\",\n" +
+    "          \"isCanceled\": false\n" +
+    "        },\n" +
+    "        {\n" +
+    "          \"startHour\": 10,\n" +
+    "          \"startMinute\": 0,\n" +
+    "          \"endHour\": 12,\n" +
+    "          \"endMinute\": 30,\n" +
+    "          \"week\": 2,\n" +
+    "          \"location\": \"제3 숙면관 403호\",\n" +
+    "          \"isCanceled\": true\n" +
+    "        }\n" +
+    "      ]\n" +
+    "    },\n" +
+    "    {\n" +
+    "      \"name\": \"대학수면학특론\",\n" +
+    "      \"instructor\": \"쿨쿨자\",\n" +
+    "      \"scheduleList\": [\n" +
+    "        {\n" +
+    "          \"startHour\": 13,\n" +
+    "          \"startMinute\": 0,\n" +
+    "          \"endHour\": 16,\n" +
+    "          \"endMinute\": 0,\n" +
+    "          \"week\": 0,\n" +
+    "          \"location\": \"컨퍼런슬립홀 중강당\",\n" +
+    "          \"isCanceled\": false\n" +
+    "        },\n" +
+    "        {\n" +
+    "          \"startHour\": 9,\n" +
+    "          \"startMinute\": 0,\n" +
+    "          \"endHour\": 10,\n" +
+    "          \"endMinute\": 30,\n" +
+    "          \"week\": 3,\n" +
+    "          \"location\": \"제1 숙면관 203호\",\n" +
+    "          \"isCanceled\": false\n" +
+    "        }\n" +
+    "      ]\n" +
+    "    }\n" +
+    "  ],\n" +
+    "  \"exceptionalSchduleList\": [\n" +
+    "    {\n" +
+    "      \"name\": \"현대꿈해석학 초청강사특강\",\n" +
+    "      \"location\": \"컨퍼런슬립홀 중강당\",\n" +
+    "      \"startHour\": 13,\n" +
+    "      \"startMinute\": 0,\n" +
+    "      \"endHour\": 15,\n" +
+    "      \"endMinute\": 0,\n" +
+    "      \"date\": {\n" +
+    "        \"year\": 2017,\n" +
+    "        \"month\": 12,\n" +
+    "        \"day\": 15,\n" +
+    "        \"week\": 4\n" +
+    "      }\n" +
+    "    }\n" +
+    "  ],\n" +
+    "  \"date\": {\n" +
+    "    \"year\": 2017,\n" +
+    "    \"month\": 12,\n" +
+    "    \"day\": 12,\n" +
+    "    \"week\": 1\n" +
+    "  }\n" +
+    "}";
+
+function createRandomColor(){
+    var r = Math.floor(Math.random()*256);
+    var g = Math.floor(Math.random()*256);
+    var b = Math.floor(Math.random()*256);
+    return "rgb(" + r + "," + g + "," + b + ")";
+
+}
 
 document.observe('dom:loaded', function() {
     var weeklyTimeTables = $$("div.weeklyTimeTable");
     for(var i=0; i<weeklyTimeTables.length; i++) {
+        try {
+            var json = JSON.parse(sampleJSON);
+            var weeklyTimeTable = new WeeklyTimeTable(weeklyTimeTables[i], json.name, new Date(json.date.year,json.date.month-1,json.date.day,0,0,0,0),json.date.week);
 
-        var lec = new Lecture("취침학개론","최드르렁","Red");
-        lec.addRegularScheduleCustom(10,0,11,30,0,"제1 취침관 201호",lec);
-        lec.addRegularScheduleCustom(10,0,12,30,2,"제3 숙면관 403호",lec);
+            for(var i=0; i<json.lectureList.length; i++){
+                var jlec = json.lectureList[i];
+                var lec = new Lecture(jlec.name,jlec.instructor,createRandomColor());
+                for(var j=0; j < jlec.scheduleList.length; j++){
+                    var jsch = jlec.scheduleList[j];
+                    lec.addRegularScheduleCustom(jsch.startHour,jsch.startMinute,jsch.endHour,jsch.endMinute,jsch.week,jsch.location,jsch.isCanceled,lec);
+                }
+                weeklyTimeTable.addLecture(lec);
+            }
+            for(var j=0; j < json.exceptionalSchduleList.length; j++){
+                var jex = json.exceptionalSchduleList[j];
+                weeklyTimeTable.exceptionalList.push(new IrregularSchedule(jex.name,jex.location,new ScheduleTime(jex.startHour,jex.startMinute,jex.endHour,jex.endMinute),new Date(jex.date.year,jex.date.month-1,jex.date.day,0,0,0,0),jex.date.week));
+            }
 
-        var lec2 = new Lecture("대학수면학특론","쿨쿨자","Blue");
-        lec2.addRegularScheduleCustom(13,0,16,0,0,"컨퍼런슬립홀 중강당",lec);
-        lec2.addRegularScheduleCustom(9,0,10,30,3,"제1 숙면관 203호",lec);
-
-
-        var weeklyTimeTable = new WeeklyTimeTable(weeklyTimeTables[i],"SAMPLE WEEKLY-TIMETABLE");
-        weeklyTimeTable.addLecture(lec);
-        weeklyTimeTable.addLecture(lec2);
-        weeklyTimeTable.onCreate(9, 32, 30,null);
+            // var lec = new Lecture("취침학개론", "최드르렁", createRandomColor());
+            // lec.addRegularScheduleCustom(10, 0, 11, 30, 0, "제1 취침관 201호", false, lec);
+            // lec.addRegularScheduleCustom(10, 0, 12, 30, 2, "제3 숙면관 403호", false, lec);
+            //
+            // alert(sampleJSON);
+            //
+            // var lec2 = new Lecture("대학수면학특론", "쿨쿨자", createRandomColor());
+            // lec2.addRegularScheduleCustom(13, 0, 16, 0, 0, "컨퍼런슬립홀 중강당", false, lec);
+            // lec2.addRegularScheduleCustom(9, 0, 10, 30, 3, "제1 숙면관 203호", false, lec);
+            // weeklyTimeTable.addLecture(lec);
+            // weeklyTimeTable.addLecture(lec2);
+            weeklyTimeTable.onCreate(9, 32, 30, null);
+        }catch(err){
+            alert("error : " + err.message);
+        }
 
     }
 });
