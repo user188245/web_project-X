@@ -5,21 +5,21 @@ from django.contrib.auth.models import (
 
 # Create your models here.
 class UserManager(BaseUserManager):
-    def create_user(self, email, name, password=None):
+    def create_user(self, email, user_name, password=None):
         if not email:
             raise ValueError('이메일 주소를 입력하셔야 합니다.')
         user = self.model(
             email=UserManager.normalize_email(email),
-            name=name,
+            user_name=user_name,
         )
 
         user.set_password(password)
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, email, name, password):
+    def create_superuser(self, email, user_name, password):
         su = self.create_user(email=email,
-                                   name=name,
+                                   user_name=user_name,
                                    password=password,
                                    )
         su.is_admin = True
@@ -28,13 +28,18 @@ class UserManager(BaseUserManager):
 
 
 class User(AbstractBaseUser, PermissionsMixin):
+    user_id = models.AutoField(
+        verbose_name='user_id',
+        primary_key=True,
+        editable=False
+    )
     email = models.EmailField(
         verbose_name='email',
         max_length=127,
         unique=True,
     )
-    name = models.CharField(
-        verbose_name='name',
+    user_name = models.CharField(
+        verbose_name='user_name',
         max_length=63,
         blank=False,
     )
@@ -45,14 +50,14 @@ class User(AbstractBaseUser, PermissionsMixin):
     objects = UserManager()
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['name']
+    REQUIRED_FIELDS = ['user_name']
 
 
     def get_full_name(self):
         return self.email
 
     def get_short_name(self):
-        return self.name
+        return self.user_name
 
     def __str__(self):
         return self.email
