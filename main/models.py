@@ -19,7 +19,11 @@ class Semester(models.Model):
     end_day = models.DateField(
         verbose_name='end_day'
     )
-    user_id = models.ForeignKey('accounts.User')
+    user_id = models.ForeignKey(
+        'accounts.User',
+        verbose_name='user_id',
+        on_delete=models.CASCADE
+    )
 
     def create(self):
         self.save()
@@ -42,7 +46,11 @@ class Class(models.Model):
         max_length=32,
     )
     credit = models.IntegerField(verbose_name='credit')
-    semester_id = models.ForeignKey('main.Semester')
+    semester_id = models.ForeignKey(
+        'main.Semester',
+        verbose_name='semester_id',
+        on_delete=models.CASCADE
+    )
 
     def create(self):
         self.save()
@@ -58,7 +66,11 @@ class ClassTime(models.Model):
     )
     start_time = models.TimeField(verbose_name='start_time')
     end_time = models.TimeField(verbose_name='end_time')
-    class_id = models.ForeignKey('main.Class')
+    class_id = models.ForeignKey(
+        'main.Class',
+        verbose_name='class_id',
+        on_delete=models.CASCADE
+    )
 
     def create(self):
         self.save()
@@ -90,8 +102,16 @@ class Calendar(models.Model):
         verbose_name='calendar_id',
         primary_key=True
     )
-    class_id = models.ForeignKey('main.Class')
-    period_id = models.ForeignKey('main.Period')
+    class_id = models.ForeignKey(
+        'main.Class',
+        verbose_name='class_id',
+        on_delete=models.CASCADE
+    )
+    period_id = models.ForeignKey(
+        'main.Period',
+        verbose_name='period_id',
+        on_delete=models.CASCADE
+    )
     date = models.DateField(verbose_name='date')
     title = models.CharField(
         verbose_name='title',
@@ -114,8 +134,16 @@ class Memo(models.Model):
         verbose_name='memo_id',
         primary_key=True
     )
-    class_id = models.ForeignKey('main.Class')
-    period_id = models.ForeignKey('main.Period')
+    class_id = models.ForeignKey(
+        'main.Class',
+        verbose_name='class_id',
+        on_delete=models.CASCADE
+    )
+    period_id = models.ForeignKey(
+        'main.Period',
+        verbose_name='period_id',
+        on_delete=models.CASCADE
+    )
     title = models.CharField(
         verbose_name='title',
         max_length=256,
@@ -143,7 +171,11 @@ class Grade(models.Model):
         verbose_name='grade_id',
         primary_key=True
     )
-    class_id = models.ForeignKey('main.Class')
+    class_id = models.ForeignKey(
+        'main.Class',
+        verbose_name='class_id',
+        on_delete=models.CASCADE
+    )
     grade = models.CharField(
         verbose_name='grade',
         max_length=3,
