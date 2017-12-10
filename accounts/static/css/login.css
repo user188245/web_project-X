@@ -1,0 +1,16 @@
+h1 {
+	margin: 100px auto 10px auto;
+	position: relative;
+	width: 200px;
+	height: 100px;
+}
+
+div {
+	margin: auto;
+	position: relative;
+	width: 200px;
+}
+
+#btn {
+	margin-top: 30px;
+}

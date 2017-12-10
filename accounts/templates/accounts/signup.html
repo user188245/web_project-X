@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <form id="signup" class="form-horizontal" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    <!-- Email input-->
+    <div class="row control-group">
+        <div class="form-group col-xs-12 floating-label-form-group controls">
+            {{ signupform.email.label_tag }}
+            {{ signupform.email }}
+            <span class="field-error">
+            {{ signupform.email.errors|striptags }}
+            </span>
+        </div>
+    </div>
+
+    <!-- Username input-->
+    <div class="row control-group">
+        <div class="form-group col-xs-12 floating-label-form-group controls">
+            {{ signupform.name.label_tag }}
+            {{ signupform.name }}
+            <span class="field-error">
+            {{ signupform.name.errors|striptags }}
+            </span>
+        </div>
+    </div>
+
+    <!-- Password1 input-->
+    <div class="row control-group">
+        <div class="form-group col-xs-12 floating-label-form-group controls">
+            {{ signupform.password1.label_tag }}
+            {{ signupform.password1 }}
+            <span class="field-error">
+            {{ signupform.password1.errors|striptags }}
+            </span>
+        </div>
+    </div>
+
+    <!-- Password2 input-->
+    <div class="row control-group">
+        <div class="form-group col-xs-12 floating-label-form-group controls">
+            {{ signupform.password2.label_tag }}
+            {{ signupform.password2 }}
+            <span class="field-error">
+            {{ signupform.password2.errors|striptags }}
+            </span>
+        </div>
+    </div>
+
+    <br>
+
+    <!-- Button -->
+    <div class="row">
+        <button type="submit" class="form-group col-xs-12">Sign Up</button><br/>
+        <hr>
+
+            Or <a href=""><u>log in</u></a>
+            if you have an account.
+    </div>
+</form>
+</body>
+</html>

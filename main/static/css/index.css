@@ -1,0 +1,87 @@
+nav, aside, article, div {
+	border: 2pt solid blue;
+}
+
+div {
+	float: right;
+	margin-top: 12px;
+}
+
+aside, article {
+	height: 600px;
+}
+
+nav {
+	margin-bottom: 10px;
+	height: 50px;
+}
+
+aside {
+	float: left;
+	width: 200px;
+
+}
+
+div.weeklyTimeTable{
+	border: none;
+	margin: auto;
+	position: relative;
+    float: left;
+}
+
+div.weeklyTimeTable rect.topHeader{
+    fill: #fcc64580;
+    stroke: #40404030;
+    stroke-width:1;
+}
+
+div.weeklyTimeTable text.topHeader{
+    font-size: 9px;
+    font-family: sans-serif;
+    fill: Purple;
+}
+
+div.weeklyTimeTable rect.xHeader{
+    fill: #f2fc9d;
+    stroke: #40404030;
+    stroke-width:1;
+}
+
+div.weeklyTimeTable text.xHeader{
+    font-size: 9px;
+    font-family: Arial;
+    fill: Blue;
+}
+
+div.weeklyTimeTable rect.yHeader{
+    fill: #f2fc9d;
+    stroke: #40404030;
+    stroke-width:1;
+}
+
+div.weeklyTimeTable text.yHeader{
+    font-size: 5px;
+    font-weight: bold;
+    font-style: italic;
+    font-family: serif;
+    fill: Red;
+}
+
+div.weeklyTimeTable rect.table{
+    fill: #a2d6ea20;
+    stroke: #40404030;
+    stroke-width:1;
+}
+
+div.weeklyTimeTable rect.lecture{
+    stroke: #404040;
+    stroke-width:1;
+}
+
+div.weeklyTimeTable text.lecture{
+    font-size: 8px;
+    font-weight: bold;
+    font-family: sans-serif;
+    fill: #7FFF00;
+
+}

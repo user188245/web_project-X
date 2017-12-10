@@ -2,6 +2,7 @@
 import os
 import sys
 
+sys.path.append("/home/juwon/PycharmProjects/web_project-X")
 if __name__ == "__main__":
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "TeamX_Timetable.settings")
     try:

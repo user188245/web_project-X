@@ -1,0 +1,23 @@
+{% load staticfiles %}
+
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<link rel="stylesheet" type="text/css" href="{% static 'css/login.css' %}">
+	<title>Timetable</title>
+</head>
+<body>
+	<h1> Please, log in </h1>
+	<div id="login">
+		<p>ID:</p>
+		<input type="text" name="id" />
+		<p>PASSWORD:</p>
+		<input type="password" name="pw" />
+	</div>
+	<div id="btn">
+		<a href="/"><input type="submit" name="submit" value="LOG IN" /></a>
+		<a href="{% url 'signup' %}"><input type="submit" name="submit" value="Signup" /></a>
+	</div>
+</body>
+</html>

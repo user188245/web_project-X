@@ -3,4 +3,5 @@
 
 django_server branch
 
-hahahaha
+현재 상황:
+- accounts(계정) 모델 생성
