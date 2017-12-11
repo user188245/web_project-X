@@ -60,9 +60,7 @@ div.weeklyTimeTable rect.yHeader{
 }
 
 div.weeklyTimeTable text.yHeader{
-    font-size: 5px;
-    font-weight: bold;
-    font-style: italic;
+    font-size: 8px;
     font-family: serif;
     fill: Red;
 }
@@ -82,6 +80,14 @@ div.weeklyTimeTable text.lecture{
     font-size: 8px;
     font-weight: bold;
     font-family: sans-serif;
-    fill: #7FFF00;
+    fill: Black;
+}
 
+div.popup{
+    display: none;
+    position: absolute;
+    text-align: center;
+    border: 1px solid black;
+    background-color: cornsilk;
+    left: 20px;
 }

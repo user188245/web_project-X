@@ -6,6 +6,9 @@ var xmlns = "http://www.w3.org/2000/svg";
 
 
 
+var uTimeTable = [];
+var uDate = new Date();
+
 /*
 
 
@@ -27,7 +30,7 @@ function getTime(hour,minute){
 }
 
 function getFormattedDate(date) {
-    return Month[date.getMonth()] + "," + date.getDate() + "," + date.getFullYear();
+    return Month[date.getMonth()] + "," + date.getDate() + "," + date.getFullYear() + "(" + Week[(date.getDay() + 6) % 7] + ")";
 }
 
 function ScheduleTime(start_hour,start_min,end_hour,end_min){
@@ -93,32 +96,44 @@ RegularSchedule.prototype = {
 
 var rectOnClickRegularEvent = function(){
     alert("Selected Lecture-Unit : " + this.schedule.toString() + " & Selected Lecture : " + this.lecture.toString());
-}
+    $("plan_info").style.setProperty("display","none");
+    $("lec_info").style.setProperty("display","block");
+    $("lec_info_name").innerText = this.lecture.name;
+    $("lec_info_instructor").innerText = this.lecture.instructor;
+    $("lec_info_activation").innerText = (this.schedule.isInactive)?"No":"Yes";
+    $("lec_info_period").innerText = this.schedule.scheduleTime;
+    $("lec_info_location").innerText = this.schedule.location;
+};
 
 var rectOnClickIrregularEvent = function(){
     alert(this.schedule.toString());
-}
+    $("lec_info").style.setProperty("display","none");
+    $("plan_info").style.setProperty("display","block");
+    $("plan_info_name").innerText = this.schedule.name;
+    $("plan_info_date").innerText = getFormattedDate(this.schedule.date);
+    $("plan_info_period").innerText = this.schedule.scheduleTime;
+    $("plan_info_location").innerText = this.schedule.location;
+};
 
 
-function IrregularSchedule(name,location,scheduleTime,date,week){
+function IrregularSchedule(name,location,scheduleTime,date){
     this.name = name;
     this.location = location;
     this.scheduleTime = scheduleTime;
     this.date = date;
-    this.week = week;
 }
 
 IrregularSchedule.prototype = {
     toString : function () {
         return this.name + "," + getFormattedDate(this.date) + "," +  this.scheduleTime.toString() +"," + this.location;
     }
-}
+};
 
 
 
 
 
-function WeeklyTimeTable(timeTable,tableName,date,week){
+function WeeklyTimeTable(timeTable){
 
     this.svg = document.createElementNS(xmlns,"svg");
     this.style = window.getComputedStyle(timeTable,null);
@@ -130,8 +145,7 @@ function WeeklyTimeTable(timeTable,tableName,date,week){
     this.startTime = 7;
     this.count = 24;
     this.interval = 30;
-    this.date = date;
-    this.week = week;
+    this.date = new Date();
 
     this.lectureList = [];
     this.exceptionalList = [];
@@ -141,7 +155,7 @@ function WeeklyTimeTable(timeTable,tableName,date,week){
 
 
     /*definitive value*/
-    this.tableName = tableName;
+    this.tableName = "init";
     this.svg.setAttribute("width",this.width.toString());
     this.svg.setAttribute("height",this.height.toString());
 
@@ -150,7 +164,12 @@ function WeeklyTimeTable(timeTable,tableName,date,week){
 
 }
 WeeklyTimeTable.prototype = {
-    onCreate: function(startTime,count,interval,date){
+    clear: function () {
+        this.lectureList = [];
+        this.exceptionalList = [];
+    },
+    onCreate: function(name,startTime,count,interval,date){
+        if(name !== null) {this.name = name;}
         if(startTime !== null) {this.startTime = startTime;}
         if(count !== null) {this.count = count;}
         if(interval !== null) {this.interval = interval;}
@@ -174,7 +193,7 @@ WeeklyTimeTable.prototype = {
         for(var j=0; j<7; j++){
             var x = topWidth+(xUnit*j);
             rect = this.createRect(x,headHeight,xUnit,topHeight,"xHeader");
-            if(this.week !== j){
+            if((this.date.getDay() + 6) % 7 !== j){
                 rect.style.setProperty("opacity","0.4");
             }
             this.createText(x,headHeight+topHeight,2,-2,null,null,Week[j],"xHeader");
@@ -215,14 +234,13 @@ WeeklyTimeTable.prototype = {
             var floatHour = sUnit.scheduleTime.getFloatTime();
             var targetY = yStart+yUnit*(sUnit.scheduleTime.getFloatStart() - this.startTime)*(60/this.interval);
             var targetHeight = yUnit*sUnit.scheduleTime.getFloatTime()*(60/this.interval);
-            rect = this.createRect(xStart+xUnit*sUnit.week ,targetY,xUnit,targetHeight,"lecture");
+            rect = this.createRect(xStart+xUnit*((sUnit.date.getDay() + 6) % 7) ,targetY,xUnit,targetHeight,"lecture");
             rect.style.setProperty("fill",createRandomColor());
             rect.style.setProperty("opacity","0.95");
-            this.createText(xStart+xUnit*sUnit.week ,targetY,0,0,null,"hanging",sUnit.name + "/" + sUnit.location,"lecture").setAttribute("id","import_wrap");
+            this.createText(xStart+xUnit*((sUnit.date.getDay() + 6) % 7) ,targetY,0,0,null,"hanging",sUnit.name + "/" + sUnit.location,"lecture").setAttribute("id","import_wrap");
             d3plus.textwrap().container("#import_wrap:last-child").resize(false).draw();
             rect.schedule = sUnit;
-            rect.addEventListener("click",rectOnClickRegularEvent);
-
+            rect.addEventListener("click",rectOnClickIrregularEvent);
         }
 
 
@@ -253,10 +271,10 @@ WeeklyTimeTable.prototype = {
         unit.setAttribute("y",y);
         unit.setAttribute("dx",dx);
         unit.setAttribute("dy",dy);
-        if(rowAlign != null) {
+        if(rowAlign !== null) {
             unit.setAttribute("text-anchor", rowAlign);
         }
-        if(colAlign != null) {
+        if(colAlign !== null) {
             unit.setAttribute("alignment-baseline", colAlign);
         }
         var textNode = document.createTextNode(text);
@@ -266,6 +284,63 @@ WeeklyTimeTable.prototype = {
         return unit;
     }
 };
+
+function SendDate(year,month,day){
+    this.year = year;
+    this.month = month+1;
+    this.day = day;
+}
+
+
+function ajax_TimeTable(senddate){
+    alert("ajax 요청예정 : (" + senddate.year + "," + senddate.month + "," + senddate.day + ")" + " 의 파라미터");
+    uDate = new Date(senddate.year,senddate.month-1,senddate.day,0,0,0,0);
+    // var param = JSON.parse(senddate);
+    // new Ajax.request("여기에 서버url을 넣는다.", {
+    //     method: "post",
+    //     parameters: param,
+    //     onSuccess: processTimeTable,
+    //     onFailure: ajaxFaulure,
+    //     onException: ajaxFaulure
+    // });
+
+    // 빌드 확인용 코드 시작.
+    processTimeTable();
+    // 빌드 확인용 코드 끝.
+}
+
+function processTimeTable(ajax){
+    var weeklyTimeTables = $$("div.weeklyTimeTable");
+    for(var i=0; i<weeklyTimeTables.length; i++) {
+        try {
+            //var json = JSON.parse(ajax.responseText);
+            var json = JSON.parse(sampleJSON);
+            //var weeklyTimeTable = new WeeklyTimeTable(weeklyTimeTables[i], json.name, uDate);
+            var weeklyTimeTable = uTimeTable[i];
+            weeklyTimeTable.clear();
+
+            for(var i=0; i<json.lectureList.length; i++){
+                var jlec = json.lectureList[i];
+                var lec = new Lecture(jlec.name,jlec.instructor,createRandomColor());
+                for(var j=0; j < jlec.scheduleList.length; j++){
+                    var jsch = jlec.scheduleList[j];
+                    lec.addRegularScheduleCustom(jsch.startHour,jsch.startMinute,jsch.endHour,jsch.endMinute,jsch.week,jsch.location,jsch.isCanceled,lec);
+                }
+                weeklyTimeTable.addLecture(lec);
+            }
+            for(var j=0; j < json.exceptionalSchduleList.length; j++){
+                var jex = json.exceptionalSchduleList[j];
+                weeklyTimeTable.exceptionalList.push(new IrregularSchedule(jex.name,jex.location,new ScheduleTime(jex.startHour,jex.startMinute,jex.endHour,jex.endMinute),new Date(jex.date.year,jex.date.month-1,jex.date.day,0,0,0,0)));
+            }
+            weeklyTimeTable.onCreate(json.name,9, 20, 60, uDate);
+        }catch(err){
+            alert("error : " + err.message);
+        }
+
+    }
+}
+
+
 
 
 
@@ -294,7 +369,7 @@ var sampleJSON = "{\n" +
     "          \"endMinute\": 30,\n" +
     "          \"week\": 0,\n" +
     "          \"location\": \"제1 취침관 201호\",\n" +
-    "          \"isCanceled\": false\n" +
+    "          \"isCanceled\": true\n" +
     "        },\n" +
     "        {\n" +
     "          \"startHour\": 10,\n" +
@@ -303,7 +378,7 @@ var sampleJSON = "{\n" +
     "          \"endMinute\": 30,\n" +
     "          \"week\": 2,\n" +
     "          \"location\": \"제3 숙면관 403호\",\n" +
-    "          \"isCanceled\": true\n" +
+    "          \"isCanceled\": false\n" +
     "        }\n" +
     "      ]\n" +
     "    },\n" +
@@ -343,65 +418,48 @@ var sampleJSON = "{\n" +
     "      \"date\": {\n" +
     "        \"year\": 2017,\n" +
     "        \"month\": 12,\n" +
-    "        \"day\": 15,\n" +
-    "        \"week\": 4\n" +
+    "        \"day\": 15\n" +
     "      }\n" +
     "    }\n" +
-    "  ],\n" +
-    "  \"date\": {\n" +
-    "    \"year\": 2017,\n" +
-    "    \"month\": 12,\n" +
-    "    \"day\": 12,\n" +
-    "    \"week\": 1\n" +
-    "  }\n" +
+    "  ]\n" +
     "}";
 
 function createRandomColor(){
-    var r = Math.floor(Math.random()*256);
-    var g = Math.floor(Math.random()*256);
-    var b = Math.floor(Math.random()*256);
-    return "rgb(" + r + "," + g + "," + b + ")";
+    var h = Math.floor(Math.random()*360);
+    var l = Math.floor(Math.random()*30)+50;
+    return "hsl(" + h + ",100%," + l + "%)";
+}
 
+
+function datepicker_event(event) {
+    var d = this.valueAsDate;
+    ajax_TimeTable(new SendDate(d.getFullYear(),d.getMonth(),d.getDate()));
+}
+
+function info_hide_event(event) {
+    this.parentElement.style.setProperty("display","none");
 }
 
 document.observe('dom:loaded', function() {
+    var d = new Date();
+    var senddate = new SendDate(d.getFullYear(),d.getMonth(),d.getDate());
+
     var weeklyTimeTables = $$("div.weeklyTimeTable");
     for(var i=0; i<weeklyTimeTables.length; i++) {
-        try {
-            var json = JSON.parse(sampleJSON);
-            var weeklyTimeTable = new WeeklyTimeTable(weeklyTimeTables[i], json.name, new Date(json.date.year,json.date.month-1,json.date.day,0,0,0,0),json.date.week);
-
-            for(var i=0; i<json.lectureList.length; i++){
-                var jlec = json.lectureList[i];
-                var lec = new Lecture(jlec.name,jlec.instructor,createRandomColor());
-                for(var j=0; j < jlec.scheduleList.length; j++){
-                    var jsch = jlec.scheduleList[j];
-                    lec.addRegularScheduleCustom(jsch.startHour,jsch.startMinute,jsch.endHour,jsch.endMinute,jsch.week,jsch.location,jsch.isCanceled,lec);
-                }
-                weeklyTimeTable.addLecture(lec);
-            }
-            for(var j=0; j < json.exceptionalSchduleList.length; j++){
-                var jex = json.exceptionalSchduleList[j];
-                weeklyTimeTable.exceptionalList.push(new IrregularSchedule(jex.name,jex.location,new ScheduleTime(jex.startHour,jex.startMinute,jex.endHour,jex.endMinute),new Date(jex.date.year,jex.date.month-1,jex.date.day,0,0,0,0),jex.date.week));
-            }
-
-            // var lec = new Lecture("취침학개론", "최드르렁", createRandomColor());
-            // lec.addRegularScheduleCustom(10, 0, 11, 30, 0, "제1 취침관 201호", false, lec);
-            // lec.addRegularScheduleCustom(10, 0, 12, 30, 2, "제3 숙면관 403호", false, lec);
-            //
-            // alert(sampleJSON);
-            //
-            // var lec2 = new Lecture("대학수면학특론", "쿨쿨자", createRandomColor());
-            // lec2.addRegularScheduleCustom(13, 0, 16, 0, 0, "컨퍼런슬립홀 중강당", false, lec);
-            // lec2.addRegularScheduleCustom(9, 0, 10, 30, 3, "제1 숙면관 203호", false, lec);
-            // weeklyTimeTable.addLecture(lec);
-            // weeklyTimeTable.addLecture(lec2);
-            weeklyTimeTable.onCreate(9, 32, 30, null);
-        }catch(err){
-            alert("error : " + err.message);
-        }
-
+        uTimeTable[i] = new WeeklyTimeTable(weeklyTimeTables[i]);
     }
+    // 클라이언트가 세션을 보내는 행위는 json이 아닌 http 헤더단에서 이루어짐
+
+    ajax_TimeTable(senddate);
+    // date-picker를 세팅함
+    var date_picker = $("datepicker");
+    date_picker.observe("change",datepicker_event);
+    
+    // footer파트의 info 설정
+    $("lec_info_hide").observe("click",info_hide_event);
+    $("plan_info_hide").observe("click",info_hide_event);
 });
+
+
 
 
