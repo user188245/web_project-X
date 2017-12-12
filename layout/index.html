@@ -15,13 +15,35 @@
 			<a href="login.html"><input type="submit" name="submit" value="LOG OUT" /></a>
 		</div>
 	</nav>
-	<aside>left side menu</aside>
+	<aside>left side menu
+				<h1>SELECT DATE</h1>
+			<input type="date" id="datepicker">
+	</aside>
 	<article>
-		<div>
+<!-- 		<div>
 			<h1>SELECT DATE</h1>
 			<input type="date" id="datepicker">
+		</div> -->
+		<div class="weeklyTimeTable" width="1200" height="880"></div>
+		<div id="lec_info" class="popup">
+			<h2>COURSE INFO</h2>
+			<span>COURSE NAME:</span><span id="lec_info_name"></span><br>
+			<span>INSTRUCTOR:</span><span id="lec_info_instructor"></span><br>
+			<span>ACTIVATION</span>:</span><span id="lec_info_activation"></span><br>
+			<br>
+			<span>SELECTED_LESSON_PERIOD:</span><span id="lec_info_period"></span><br>
+			<span>SELECTED_LESSON_LOCATION:</span><span id="lec_info_location"></span><br>
+			<input type="button" id="lec_info_hide" value="HIDE">
 		</div>
-		<div class="weeklyTimeTable" width="1350" height="880"></div>
+		<div id="plan_info" class="popup">
+			<h2>PLAN INFO</h2>
+			<span>PLAN NAME:</span><span id="plan_info_name"></span><br>
+			<br>
+			<span>PLAN_DATE:</span><span id="plan_info_date"></span><br>
+			<span>PLAN_PERIOD:</span><span id="plan_info_period"></span><br>
+			<span>PLAN_LOCATION:</span><span id="plan_info_location"></span><br>
+			<input type="button" id="plan_info_hide" value="HIDE">
+		</div>
 	</article>
 	<footer>
 		<div id="lec_info" class="popup">
