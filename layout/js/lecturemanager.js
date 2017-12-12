@@ -1,6 +1,9 @@
 "use strict";
 
-//Make the DIV element draggagle:
+var lectureList = [];
+var tempTimeList = [];
+
+
 function dragElement(event) {
     var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
     if ($("addpopup_header")) {
@@ -47,12 +50,7 @@ function reportAdder(event) {
     var popup = $("lecture_popup");
     var name = $("lec_add_name").value;
     var instructor = $("lec_add_instructor").value;
-    var homepage = $("lec_add_homepage").value;
-    var info = $("lec_add_info").value;
-    alert("name : " + name +"\n"+
-        "instructor : " + instructor +"\n"+
-        "homepage : " + homepage +"\n"+
-        "info : " + info +"\n");
+    alert("TEST : " + name + "," + instructor);
     popup.style.setProperty("display","none");
 }
 
