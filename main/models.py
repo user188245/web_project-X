@@ -9,7 +9,7 @@ class Semester(models.Model):
     )
     semester_name = models.CharField(
         verbose_name='semester_name',
-        max_length=32,
+        max_length=31,
         unique=True
     )
     start_day = models.DateField(
@@ -39,13 +39,18 @@ class Class(models.Model):
     )
     class_name = models.CharField(
         verbose_name='class_name',
-        max_length=128,
+        max_length=127,
     )
     professor = models.CharField(
         verbose_name='professor',
-        max_length=32,
+        max_length=31,
     )
     credit = models.IntegerField(verbose_name='credit')
+    homepage = models.CharField(
+        verbose_name='homepage',
+        max_length=511,
+    )
+
     semester_id = models.ForeignKey(
         'main.Semester',
         verbose_name='semester_id',
@@ -79,24 +84,6 @@ class ClassTime(models.Model):
         return self.class_id + " " + self.start_time
 
 
-class Period(models.Model):
-    period_id = models.AutoField(
-        verbose_name='period_id',
-        primary_key=True
-    )
-    year = models.IntegerField(verbose_name='year')
-    start_month = models.IntegerField(verbose_name='start_month')
-    week = models.IntegerField(verbose_name='week')
-    start_day = models.IntegerField(verbose_name='start_day')
-    end_day = models.IntegerField(verbose_name='end_day')
-
-    def create(self):
-        self.save()
-
-    def __str__(self):
-        return self.year + "년 " + self.start_month + "월 " + self.week + "째주 "
-
-
 class Calendar(models.Model):
     calendar_id = models.AutoField(
         verbose_name='calendar_id',
@@ -107,18 +94,17 @@ class Calendar(models.Model):
         verbose_name='class_id',
         on_delete=models.CASCADE
     )
-    period_id = models.ForeignKey(
-        'main.Period',
-        verbose_name='period_id',
-        on_delete=models.CASCADE
-    )
     date = models.DateField(verbose_name='date')
     title = models.CharField(
         verbose_name='title',
-        max_length=256,
+        max_length=255,
         null=False
     )
     text = models.TextField(verbose_name='text')
+    place = models.CharField(
+        verbose_name='place',
+        max_length=127
+    )
     start_time = models.TimeField(verbose_name='start_time')
     end_time = models.TimeField(verbose_name='end_time')
 
@@ -139,14 +125,9 @@ class Memo(models.Model):
         verbose_name='class_id',
         on_delete=models.CASCADE
     )
-    period_id = models.ForeignKey(
-        'main.Period',
-        verbose_name='period_id',
-        on_delete=models.CASCADE
-    )
     title = models.CharField(
         verbose_name='title',
-        max_length=256,
+        max_length=255,
         null=False
     )
     text = models.TextField(verbose_name='text')
