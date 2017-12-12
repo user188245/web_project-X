@@ -95,7 +95,7 @@ RegularSchedule.prototype = {
 };
 
 var rectOnClickRegularEvent = function(){
-    alert("Selected Lecture-Unit : " + this.schedule.toString() + " & Selected Lecture : " + this.lecture.toString());
+    // alert("Selected Lecture-Unit : " + this.schedule.toString() + " & Selected Lecture : " + this.lecture.toString());
     $("plan_info").style.setProperty("display","none");
     $("lec_info").style.setProperty("display","block");
     $("lec_info_name").innerText = this.lecture.name;
@@ -106,7 +106,7 @@ var rectOnClickRegularEvent = function(){
 };
 
 var rectOnClickIrregularEvent = function(){
-    alert(this.schedule.toString());
+    // alert(this.schedule.toString());
     $("lec_info").style.setProperty("display","none");
     $("plan_info").style.setProperty("display","block");
     $("plan_info_name").innerText = this.schedule.name;
@@ -454,7 +454,7 @@ document.observe('dom:loaded', function() {
     // date-picker를 세팅함
     var date_picker = $("datepicker");
     date_picker.observe("change",datepicker_event);
-    
+
     // footer파트의 info 설정
     $("lec_info_hide").observe("click",info_hide_event);
     $("plan_info_hide").observe("click",info_hide_event);
