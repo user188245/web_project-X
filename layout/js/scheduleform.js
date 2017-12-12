@@ -50,11 +50,20 @@ ScheduleTime.prototype = {
     }
 };
 
-function Lecture(name,instructor,separatingColor){
+function Lecture(name,instructor,homepage,separatingColor){
     this.name = name;
     this.instructor = instructor;
-    this.separatingColor = separatingColor;
+    this.homepage = homepage;
+    this.separatingColor = separatingColor; // WARNNING!! this is private field, do not refer this value.;
     this.scheduleList = [];
+    this.toJSON = function() {
+        return {
+            "name": this.name,
+            "instructor": this.instructor,
+            "homepage": this.homepage,
+            "scheduleList": this.scheduleList
+        };
+    };
 }
 
 Lecture.prototype = {
@@ -66,6 +75,9 @@ Lecture.prototype = {
     },
     addRegularScheduleCustom:function(start_hour,start_min,end_hour,end_min,week,location,isInactive,lecture){
         this.scheduleList.push(new RegularSchedule(new ScheduleTime(start_hour,start_min,end_hour,end_min), week, location, isInactive, lecture));
+    },
+    setRegularScheduleList:function(regularScheduleList){
+        this.scheduleList = regularScheduleList;
     }
 };
 
@@ -75,6 +87,13 @@ function RegularSchedule(scheduleTime,week,location,isInactive,lecture){
     this.location = location;
     this.lecture = lecture;
     this.isInactive = isInactive;
+    this.toJSON = function() {
+        return {
+            "scheduleTime": this.scheduleTime,
+            "week": this.week,
+            "location": this.location
+        };
+    };
 }
 
 RegularSchedule.prototype = {
@@ -84,9 +103,10 @@ RegularSchedule.prototype = {
 };
 
 
-function IrregularSchedule(name,location,scheduleTime,date){
+function IrregularSchedule(name,location,text,scheduleTime,date){
     this.name = name;
     this.location = location;
+    this.text = text;
     this.scheduleTime = scheduleTime;
     this.date = date;
 }
