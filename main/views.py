@@ -37,3 +37,11 @@ def create_semester(request):
     return render(request, "main/create_semester.html", {
         "createform": createform
     })
+
+
+def lecture(request):
+    return render(request, 'main/lecture.html')
+
+
+def calendar(request):
+    return render(request, 'main/calendar.html')

@@ -58,6 +58,7 @@ class SignupForm(UserCreationForm):
 # class SigninForm(AuthenticationForm):
 class SigninForm(forms.ModelForm):
     email = forms.EmailField(
+        label='EMAIL',
         max_length=127,
         widget=forms.EmailInput(
             attrs={
@@ -68,6 +69,7 @@ class SigninForm(forms.ModelForm):
     )
 
     password = forms.CharField(
+        label='PASSWORD',
         widget=forms.PasswordInput(
             attrs={
                 'class': 'form-control',
