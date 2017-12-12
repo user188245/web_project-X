@@ -39,22 +39,24 @@ class Class(models.Model):
     )
     class_name = models.CharField(
         verbose_name='class_name',
-        max_length=127,
+        max_length=127
     )
     professor = models.CharField(
         verbose_name='professor',
-        max_length=31,
+        max_length=31
     )
     credit = models.IntegerField(verbose_name='credit')
     homepage = models.CharField(
         verbose_name='homepage',
         max_length=511,
+        null=True
     )
     semester_id = models.ForeignKey(
         'main.Semester',
         verbose_name='semester_id',
         on_delete=models.CASCADE
     )
+    objects = models.Manager
 
     def create(self):
         self.save()
@@ -71,11 +73,16 @@ class ClassTime(models.Model):
     weekday = models.IntegerField(verbose_name='weekday')
     start_time = models.TimeField(verbose_name='start_time')
     end_time = models.TimeField(verbose_name='end_time')
+    location = models.CharField(
+        verbose_name='location',
+        max_length=128
+    )
     class_id = models.ForeignKey(
         'main.Class',
         verbose_name='class_id',
         on_delete=models.CASCADE
     )
+    objects = models.Manager
 
     def create(self):
         self.save()
@@ -107,6 +114,7 @@ class Calendar(models.Model):
     )
     start_time = models.TimeField(verbose_name='start_time')
     end_time = models.TimeField(verbose_name='end_time')
+    objects = models.Manager
 
     def create(self):
         self.save()
@@ -137,7 +145,9 @@ class Memo(models.Model):
     published_date = models.DateTimeField(
         verbose_name="published_date",
         blank=True,
-        null=True)
+        null=True
+    )
+    objects = models.Manager
 
     def create(self):
         self.published_date = timezone.now()
@@ -173,6 +183,7 @@ class Grade(models.Model):
         null=False,
         default=True
     )
+    objects = models.Manager
 
     def create(self):
         self.save()

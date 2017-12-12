@@ -8,26 +8,61 @@
     <script src="{% static 'js/scheduleform.js' %}" type="text/javascript" charset="UTF-8"></script>
     <script src="{% static 'js/lecturemanager.js' %}" type="text/javascript" charset="UTF-8"></script>
     <link rel="stylesheet" type="text/css" href="{% static 'css/lecture.css' %}" />
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
     <title>Timetable</title>
 </head>
 <body>
 <div id="lecture">
     <h1>정규 클레스 관리</h1>
 
-    <div id="lecture_list">
+    <div>
+        <h3 class="w3-blue">수업리스트</h3>
+        <ul id="lecture_list" class="w3-ul w3-tiny w3-hoverable">
+        </ul>
     </div>
-
+    <br>
     <input id="lecture_add" type="button" value="[임시추가]">
+    <br>
+    JSON for ajax to server:
+    <br>
+    <span id="testing"></span>
 
     <div id="lecture_popup">
-        <div id="addpopup">
-            <div id="addpopup_header">HEADER</div>
+        <div id="addpopup" class="w3-pale-green">
+            <div id="addpopup_header" class="w3-blue">HEADER</div>
             <fieldset>
-                <legend>ADD LECTURE</legend>
-                <label for="lec_add_name">이름 : </label><input type="text" id="lec_add_name" class="addtext" required><br>
-                <label for="lec_add_instructor">강사 : </label><input type="text" id="lec_add_instructor" class="addtext" required><br>
-                <input type="button" id="lec_add_ok" value="OK">
-                <input type="button" id="lec_add_cancel" value="CANCEL">
+                <legend>[ADD/MODIFY] LECTURE</legend>
+                <div class="w3-container w3-cell">
+                    <label for="lec_add_name">이름</label><input type="text" id="lec_add_name" class="w3-input w3-border" required><br>
+                    <label for="lec_add_instructor">강사</label><input type="text" id="lec_add_instructor" class="w3-input w3-border" required><br>
+                    <label for="lec_add_homepage">홈페이지</label><input type="text" id="lec_add_homepage" class="w3-input w3-border" value="http://" required><br>
+                    <!--<label for="lec_add_credit">학점 : </label><input type="number" id="lec_add_credit" placeholder="0" min="0" max="10" class="w3-border" required><br>-->
+                </div>
+                <div class="w3-container w3-cell w3-pale-blue w3-panel w3-border w3-round-large">
+                    <div class="w3-container">
+
+                        <legend class="w3-blue"></legend>
+                        시간<span class="w3-input w3-border"><input type="time" id="lec_add_timeStart" value="00:00" required> ~ <input type="time" id="lec_add_timeEnd" value="00:00" required></span><br>
+                        장소<input type="text" id="lec_add_location" class="w3-input w3-border" required><br>
+                        요일<select class="w3-input w3-border" id="lec_add_week" name="week">
+                        <option value="0">월</option>
+                        <option value="1">화</option>
+                        <option value="2">수</option>
+                        <option value="3">목</option>
+                        <option value="4">금</option>
+                        <option value="5">토</option>
+                        <option value="6">일</option>
+                    </select><br>
+                        <button id="lec_add_timeButton" class="w3-btn w3-blue-grey">Add</button>
+                    </div>
+                    <div class="w3-container">
+                        <ul id="lec_add_timeList" class="w3-ul w3-border">
+                        </ul>
+                    </div>
+                </div>
+                <br>
+                <input type="button" class="w3-btn w3-blue-grey" id="lec_add_ok" value="OK">
+                <input type="button" class="w3-btn w3-blue-grey" id="lec_add_cancel" value="CANCEL">
             </fieldset>
         </div>
     </div>

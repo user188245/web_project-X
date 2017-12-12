@@ -2,7 +2,7 @@ from django.shortcuts import render, reverse
 from django.http import HttpResponseRedirect, HttpResponse
 import simplejson
 import datetime
-from .models import Semester
+from .models import Semester, Class, ClassTime, Calendar
 from .forms import CreateSemester
 
 
@@ -17,24 +17,31 @@ def classtime(request):
 
 def classtime_ajax(request):
     if request.is_ajax():
-        date = datetime.datetime.strptime(request.POST['date'], '%Y-%m-%d')
-        current_weekday = [2, 3, 4, 5, 6, 7, 1][date.weekday()]
-        sunday = date - datetime.timedelta(days=(current_weekday - 1))
-        saturday = date + datetime.timedelta(days=(7 - current_weekday))
+        date = datetime.datetime.strptime(request.POST['date'], '%Y-%m-%d').date()
+        current_weekday = date.weekday()
+        monday = date - datetime.timedelta(days=(current_weekday - 1))
+        sunday = date + datetime.timedelta(days=(7 - current_weekday))
+        monday_str = monday.isoformat()
         sunday_str = sunday.isoformat()
-        saturday_str = saturday.isoformat()
         # 쿼리 시작
         semester_rows = Semester.objects.filter(user_id_id=request.user.user_id)
-        return HttpResponse('It Works! ' + semester_rows.__str__())
+        semester_id = 0
+        for semester_row in semester_rows:
+            if (semester_row.start_day < date) and (semester_row.end_day > date):
+                semester_id = semester_row.semester_id
+                current_semester = semester_row
+                break
+            else:
+                continue
+        if semester_id == 0:
+            return HttpResponse("No Data")
+
+        lecture_rows = Class.objects.filter(semester_id_id=current_semester.semester_id)
+        # classtime_rows = ClassTime.objects.filter()
+        return HttpResponse("length is " )
 
 
-    return HttpResponse("PuHeHe")
-
-
-    # contents = {}
-    #
-    # return HttpResponse(json)
-
+    return HttpResponse("Invalid Request")
 
 
 def semester(request):
