@@ -50,7 +50,6 @@ class Class(models.Model):
         verbose_name='homepage',
         max_length=511,
     )
-
     semester_id = models.ForeignKey(
         'main.Semester',
         verbose_name='semester_id',
@@ -69,6 +68,7 @@ class ClassTime(models.Model):
         verbose_name='classtime_id',
         primary_key=True
     )
+    weekday = models.IntegerField(verbose_name='weekday')
     start_time = models.TimeField(verbose_name='start_time')
     end_time = models.TimeField(verbose_name='end_time')
     class_id = models.ForeignKey(

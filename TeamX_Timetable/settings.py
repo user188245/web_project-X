@@ -42,6 +42,7 @@ BASE_APPS = [
 ]
 
 EXTERNAL_APPS = [
+
     'main',
     'accounts',
 ]

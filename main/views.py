@@ -1,5 +1,6 @@
 from django.shortcuts import render, reverse
 from django.http import HttpResponseRedirect, HttpResponse
+import simplejson
 import datetime
 from .models import Semester
 from .forms import CreateSemester
@@ -12,6 +13,28 @@ def classtime(request):
         return HttpResponseRedirect(
             reverse('signin')
         )
+
+
+def classtime_ajax(request):
+    if request.is_ajax():
+        date = datetime.datetime.strptime(request.POST['date'], '%Y-%m-%d')
+        current_weekday = [2, 3, 4, 5, 6, 7, 1][date.weekday()]
+        sunday = date - datetime.timedelta(days=(current_weekday - 1))
+        saturday = date + datetime.timedelta(days=(7 - current_weekday))
+        sunday_str = sunday.isoformat()
+        saturday_str = saturday.isoformat()
+        # 쿼리 시작
+        semester_rows = Semester.objects.filter(user_id_id=request.user.user_id)
+        return HttpResponse('It Works! ' + semester_rows.__str__())
+
+
+    return HttpResponse("PuHeHe")
+
+
+    # contents = {}
+    #
+    # return HttpResponse(json)
+
 
 
 def semester(request):
