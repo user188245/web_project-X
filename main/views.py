@@ -1,6 +1,11 @@
-from django.shortcuts import render
-# Create your views here.
+from django.shortcuts import render, reverse
+from django.http import HttpResponseRedirect
 
 
 def classtime(request):
-    return render(request, "main/index.html");
+    if request.user.is_authenticated:
+        return render(request, "main/index.html")
+    else:
+        return HttpResponseRedirect(
+            reverse('signin')
+        )
