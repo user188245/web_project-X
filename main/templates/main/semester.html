@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>학기</title>
+</head>
+<body>
+    <h1>학기 목록</h1>
+    <div>
+        <a href="{% url 'create_semester' %}"><input type="submit" name="submit" value="학기 추가" /></a>
+    </div>
+    {% for semester in semesters %}
+    <div class="post">
+        <p>{{ semester.semester_name }}</p>
+    </div>
+    {% endfor %}
+</body>
+</html>

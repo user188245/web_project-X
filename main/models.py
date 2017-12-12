@@ -2,7 +2,6 @@ from django.db import models
 from django.utils import timezone
 
 
-# Create your models here.
 class Semester(models.Model):
     semester_id = models.AutoField(
         verbose_name='semester_id',
@@ -24,6 +23,7 @@ class Semester(models.Model):
         verbose_name='user_id',
         on_delete=models.CASCADE
     )
+    objects = models.Manager
 
     def create(self):
         self.save()
