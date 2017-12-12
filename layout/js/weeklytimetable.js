@@ -1,6 +1,4 @@
 "use strict";
-var Week = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
-var Month= ["January","February","March","April","May","June","July","August","September","October","November","December"];
 
 var xmlns = "http://www.w3.org/2000/svg";
 
@@ -13,6 +11,7 @@ var uDate = new Date();
 
 
  */
+<<<<<<< HEAD
 function getTime(hour,minute){
     hour = (hour + parseInt(minute / 60,10)).toString();
     minute = (minute % 60).toString();
@@ -131,6 +130,8 @@ IrregularSchedule.prototype = {
 
 
 
+=======
+>>>>>>> a4e0015ab40929d6b501d93d023e1e6751e5f4fd
 
 
 function WeeklyTimeTable(timeTable){
@@ -283,6 +284,27 @@ WeeklyTimeTable.prototype = {
 
         return unit;
     }
+};
+
+var rectOnClickRegularEvent = function(){
+    alert("Selected Lecture-Unit : " + this.schedule.toString() + " & Selected Lecture : " + this.lecture.toString());
+    $("plan_info").style.setProperty("display","none");
+    $("lec_info").style.setProperty("display","block");
+    $("lec_info_name").innerText = this.lecture.name;
+    $("lec_info_instructor").innerText = this.lecture.instructor;
+    $("lec_info_activation").innerText = (this.schedule.isInactive)?"No":"Yes";
+    $("lec_info_period").innerText = this.schedule.scheduleTime;
+    $("lec_info_location").innerText = this.schedule.location;
+};
+
+var rectOnClickIrregularEvent = function(){
+    alert(this.schedule.toString());
+    $("lec_info").style.setProperty("display","none");
+    $("plan_info").style.setProperty("display","block");
+    $("plan_info_name").innerText = this.schedule.name;
+    $("plan_info_date").innerText = getFormattedDate(this.schedule.date);
+    $("plan_info_period").innerText = this.schedule.scheduleTime;
+    $("plan_info_location").innerText = this.schedule.location;
 };
 
 function SendDate(year,month,day){
