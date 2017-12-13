@@ -1,3 +1,12 @@
+#calender, #schedule {
+    width: 80%;
+    margin: auto;
+}
+
+#schedule {
+    margin-bottom: 40px;
+}
+
 * {
     box-sizing: border-box;
 }
@@ -56,6 +65,13 @@ nav {
     padding-top: 10px;
 }
 
+.weekdays li, .days li {
+    border: 2px solid #999;
+    text-align: center;
+    width: 14.2%;
+    vertical-align: middle;
+}
+
 .weekdays {
     margin: 0;
     padding: 10px 0;
@@ -65,7 +81,7 @@ nav {
 .weekdays li {
     display: inline-block;
     width: 13.6%;
-    color: #666;
+    color: black;
     text-align: center;
 }
 
@@ -73,6 +89,7 @@ nav {
     padding: 10px 0;
     background: #eee;
     margin: 0;
+    height: 450px;
 }
 
 .days li {
@@ -80,9 +97,11 @@ nav {
     display: inline-block;
     width: 13.6%;
     text-align: center;
+    margin-right: 5.5px;
     margin-bottom: 5px;
-    font-size:12px;
-    color: #777;
+    font-size: 15px;
+    color: black;
+    height: 60px;
 }
 
 .days li .active {

@@ -69,7 +69,7 @@ function makeCalendar(date) {
         $("year").innerText = date.getFullYear();
         $("month").innerText = Month[date.getMonth()];
         for(var i=0; i<startWeek; i++)
-            days[d].appendChild(makeli(" ",false));
+            days[d].appendChild(makeli("",false));
         for(var i=1; i<=maxDate; i++){
             if(i === nowDay){
                 days[d].appendChild(makeli(i,true));
