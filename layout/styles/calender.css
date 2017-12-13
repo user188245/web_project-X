@@ -14,6 +14,19 @@ nav {
     float: right;
     margin: 5px 12px;
 }
+
+#s_popup {
+    width: 300pt;
+    height: 300pt;
+    left: 50%;
+    top: 50%;
+    position: absolute;
+    z-index: 3;
+    margin-left: -150pt;
+    margin-top: -150pt;
+    display: none;
+}
+
 .month {
     padding: 70px 25px;
     width: 100%;
