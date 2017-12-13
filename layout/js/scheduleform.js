@@ -2,6 +2,23 @@
 var Week = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
 var Month= ["January","February","March","April","May","June","July","August","September","October","November","December"];
 
+(function() {
+
+    function pad(number) {
+        if (number < 10) {
+            return '0' + number;
+        }
+        return number;
+    }
+
+    Date.prototype.toISOString = function() {
+        return this.getUTCFullYear() +
+            '-' + pad(this.getUTCMonth() + 1) +
+            '-' + pad(this.getUTCDate());
+    };
+
+}());
+
 function getTime(hour,minute){
     hour = (hour + parseInt(minute / 60,10)).toString();
     minute = (minute % 60).toString();
@@ -22,6 +39,12 @@ function getFormattedDate(date) {
     return Month[date.getMonth()] + "," + date.getDate() + "," + date.getFullYear() + "(" + Week[(date.getDay() + 6) % 7] + ")";
 }
 
+function clearElement(ElementId){
+    var e = $(ElementId);
+    while(e.firstChild)
+        e.removeChild(e.firstChild);
+}
+
 function ScheduleTime(start_hour,start_min,end_hour,end_min){
     this.start_hour = start_hour;
     this.start_min  = start_min;
@@ -30,22 +53,28 @@ function ScheduleTime(start_hour,start_min,end_hour,end_min){
 }
 
 ScheduleTime.prototype = {
-    toString : function(){
+    toString : function() {
         return getTime(this.start_hour,this.start_min) + " ~ " + getTime(this.end_hour,this.end_min);
     },
-    getHour : function(){
+    getStart: function () {
+        return getTime(this.start_hour,this.start_min);
+    },
+    getEnd: function () {
+        return getTime(this.end_hour,this.end_min);
+    },
+    getHour : function() {
         return this.end_hour - this.start_hour;
     },
-    getMinute : function(){
+    getMinute : function() {
         return this.end_min - this.start_min;
     },
-    getFloatTime : function(){
+    getFloatTime : function() {
         return this.getHour() + this.getMinute()/60;
     },
-    getFloatStart : function(){
+    getFloatStart : function() {
         return this.start_hour + this.start_min/60;
     },
-    getFloatEnd : function(){
+    getFloatEnd : function() {
         return this.end_hour + this.end_min/60;
     }
 };
@@ -109,6 +138,7 @@ function IrregularSchedule(name,location,text,scheduleTime,date){
     this.text = text;
     this.scheduleTime = scheduleTime;
     this.date = date;
+
 }
 
 IrregularSchedule.prototype = {

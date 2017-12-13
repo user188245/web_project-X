@@ -44,11 +44,6 @@ function dragElement(event) {
     }
 }
 
-function clearElement(ElementId){
-    var e = $(ElementId);
-    while(e.firstChild)
-        e.removeChild(e.firstChild);
-}
 
 function prepareLectureView() {
     clearElement("lecture_list");
@@ -125,7 +120,6 @@ function modifyAdder() {
     var popup = $("lecture_popup");
     popup.style.setProperty("display", "block");
     mode = 2;
-
 }
 
 function reportAdder(event) {
@@ -209,10 +203,9 @@ function prepareTimeView(){
 
 
 document.observe('dom:loaded', function() {
-    $("lecture_add").observe("click",openAdder);
-    $("lec_add_cancel").observe("click",closeAdder);
-    $("lec_add_ok").observe("click",reportAdder);
-    $("lec_add_timeButton").observe("click",addTime);
+    $("s_add").observe("click",openAdder);
+    $("s_add_cancel").observe("click",closeAdder);
+    $("s_add_ok").observe("click",reportAdder);
 
     dragElement($("addpopup"));
 });

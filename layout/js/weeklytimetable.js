@@ -210,6 +210,13 @@ function ajax_TimeTable(senddate){
     // 빌드 확인용 코드 끝.
 }
 
+function ajaxFaulure(ajax, exception) {
+    alert("Error : \n[Server_status]:" +  ajax.status + "\n[message]:" + ajax.responseText);
+    if(exception){
+        throw exception;
+    }
+}
+
 function processTimeTable(ajax){
     var weeklyTimeTables = $$("div.weeklyTimeTable");
     for(var i=0; i<weeklyTimeTables.length; i++) {
