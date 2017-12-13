@@ -312,29 +312,11 @@ function SendDate(year,month,day){
     this.day = day;
 }
 
-function getCookie(name) {
-    var cookieValue = null;
-    if (document.cookie && document.cookie !== '') {
-        var cookies = document.cookie.split(';');
-        for (var i = 0; i < cookies.length; i++) {
-            var cookie = jQuery.trim(cookies[i]);
-            // Does this cookie string begin with the name we want?
-            if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                break;
-            }
-        }
-    }
-    return cookieValue;
-}
-
-
 function ajax_TimeTable(senddate){
-    alert("ajax 요청예정 : (" + senddate.year + "," + senddate.month + "," + senddate.day + ")" + " 의 파라미터");
+    // alert("ajax 요청예정 : (" + senddate.year + "," + senddate.month + "," + senddate.day + ")" + " 의 파라미터");
     // uDate = new Date(senddate.year,senddate.month-1,senddate.day,0,0,0,0);
     // var param = JSON.parse(senddate);
     var date = senddate.year + "-" + senddate.month + "-" + senddate.day;
-    alert("date: " + date);
     new Ajax.Request("/get/", {
         method: "post",
         parameters: "csrfmiddlewaretoken=" + csrftoken + "&date=" + date,
@@ -343,7 +325,7 @@ function ajax_TimeTable(senddate){
         onException: ajaxFaulure
     });
     // 빌드 확인용 코드 시작.
-    processTimeTable();
+    // processTimeTable();
     // 빌드 확인용 코드 끝.
 }
 
@@ -353,10 +335,11 @@ function ajaxFaulure () {
 
 function processTimeTable(ajax){
     var weeklyTimeTables = $$("div.weeklyTimeTable");
+    // alert(ajax.responseText);
     for(var i=0; i<weeklyTimeTables.length; i++) {
         try {
-            //var json = JSON.parse(ajax.responseText);
-            var json = JSON.parse(sampleJSON);
+            var json = JSON.parse(ajax.responseText);
+            // var json = JSON.parse(sampleJSON);
             //var weeklyTimeTable = new WeeklyTimeTable(weeklyTimeTables[i], json.name, uDate);
             var weeklyTimeTable = uTimeTable[i];
             weeklyTimeTable.clear();
