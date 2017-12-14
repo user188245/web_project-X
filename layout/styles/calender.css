@@ -104,11 +104,19 @@ nav {
     height: 60px;
 }
 
-.days li .active {
-    padding: 5px;
+.days li.active{
     background: #1abc9c;
     color: white !important
 }
+
+.days li span{
+    /*position: relative;*/
+    display: block;
+    font-size: 15px;
+    color: black;
+}
+
+
 
 @media screen and (max-width:720px) {
     .weekdays li, .days li {width: 13.1%;}

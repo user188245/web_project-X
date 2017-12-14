@@ -24,14 +24,15 @@ function getStartWeek(date) {
 
 function makeli(param,active) {
     var li = document.createElement("li");
-    if(active){
-        var span = document.createElement("span");
-        span.setAttribute("class","active");
-        span.appendChild(document.createTextNode(param));
-        li.appendChild(span);
-    }else
-        li.appendChild(document.createTextNode(param));
+    if(active)
+        li.setAttribute("class","active");
+    li.appendChild(document.createTextNode(param));
     if(Number.isInteger(param)) {
+        if(scheduleList[param] !== undefined && scheduleList[param].length > 0){
+            var star = document.createElement("span");
+            star.appendChild(document.createTextNode("*"));
+            li.appendChild(star);
+        }
         li.day = param;
         li.observe("click",moveCalendar);
     }
@@ -46,15 +47,15 @@ function moveCalendar(e) {
 
 function prevCalendar(e) {
     currentDate.setMonth(currentDate.getMonth()-1);
-    makeCalendar(currentDate);
     init();
+    makeCalendar(currentDate);
     prepareScheduleView();
 }
 
 function nextCalendar(e) {
     currentDate.setMonth(currentDate.getMonth()+1);
-    makeCalendar(currentDate);
     init();
+    makeCalendar(currentDate);
     prepareScheduleView();
 }
 
@@ -122,7 +123,7 @@ function prepareScheduleView(){
             ul.appendChild(li);
         }
     }catch(e){
-        alert("error on prepare")
+        alert("error on prepare : date =" + currentDate.getDate());
         alert(e.message);
     }
 }
@@ -189,6 +190,7 @@ function reportAdder(event) {
     var send = new SendSchedule(method,"N/A",schedule,null);
     $("testing").innerText = JSON.stringify(send);
     popup.style.setProperty("display","none");
+    makeCalendar(currentDate);
     mode = 0;
 }
 
@@ -199,6 +201,7 @@ function removeSchedule(event) {
         prepareScheduleView();
         var send = new SendSchedule("remove","N/A",schedule.name,null);
         $("testing").innerText = JSON.stringify(send);
+        makeCalendar(currentDate);
     }
 }
 
@@ -226,7 +229,7 @@ function initSchedules(ajax) {
     // var json = JSON.parse(ajax.responseText);
     var json = JSON.parse(sample);
     var jscheduleList = json.scheduleList;
-    for(var i=1; i<31; i++)
+    for(var i=1; i<=31; i++)
         scheduleList[i] = [];
     for(var i=0; i<jscheduleList.length; i++){
         var s = jscheduleList[i];
@@ -243,7 +246,6 @@ function initSchedules(ajax) {
 
 document.observe('dom:loaded', function() {
     currentDate = new Date();
-    makeCalendar(currentDate);
     var prevs = $$(".prev");
     var nexts = $$(".next");
     for(var i=0; i<prevs.length; i++){
@@ -256,6 +258,7 @@ document.observe('dom:loaded', function() {
     $("s_add_cancel").observe("click",closeAdder);
     $("s_add_ok").observe("click",reportAdder);
     init();
+    makeCalendar(currentDate);
     //alert("첫번째날 요일 : " + Week[startWeek] + "," + "최대 날 : " + maxDate);
 
 
