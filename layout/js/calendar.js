@@ -84,8 +84,7 @@ function makeCalendar(date) {
 
 //method : get/add/modify/remove
 
-function SendSchedule(method,tableName,schedule,date) {
-    this.method = method;
+function SendSchedule(tableName,schedule,date) {
     this.tableName = tableName;
     this.schedule = schedule;
     this.date = date;
@@ -187,8 +186,8 @@ function reportAdder(event) {
         method = "modify";
     }
     prepareScheduleView();
-    var send = new SendSchedule(method,"N/A",schedule,null);
-    $("testing").innerText = JSON.stringify(send);
+    var send = new SendSchedule("N/A",schedule,null);
+    postData(method,send);
     popup.style.setProperty("display","none");
     makeCalendar(currentDate);
     mode = 0;
@@ -199,22 +198,47 @@ function removeSchedule(event) {
         var schedule = scheduleList[currentDate.getDate()][this.index];
         scheduleList[currentDate.getDate()].splice(this.index, 1);
         prepareScheduleView();
-        var send = new SendSchedule("remove","N/A",schedule.name,null);
-        $("testing").innerText = JSON.stringify(send);
+        var send = new SendSchedule("N/A",schedule.name,null);
+        postData("remove",send);
+
         makeCalendar(currentDate);
     }
 }
 
-function init(){
-    var send = new SendSchedule("get","N/A",null,currentDate.toISOString());
-    $("testing").innerText = JSON.stringify(send);
+function postData(method,data) {
+    var csrftoken = "REMOVE_THIS";
+    var param = "csrfmiddlewaretoken=" + csrftoken + "&method=" + method +"&data=" + JSON.stringify(data);
+
     // new Ajax.request("????", {
     //     method: "post",
-    //     parameters: JSON.stringify(send),
+    //     parameters: param,
+    //     onSuccess: postSuccess,
+    //     onFailure: ajaxFaulure,
+    //     onException: ajaxFaulure
+    // })
+    $("testing").innerText = param;
+
+}
+
+function postSuccess(ajax) {
+    alert("성공적으로 요청되었습니다.");
+}
+
+function init(){
+    var data = new SendSchedule("N/A",null,currentDate.toISOString());
+
+    var csrftoken = "REMOVE_THIS";
+    var param = "csrfmiddlewaretoken=" + csrftoken + "&method=" + "get" +"&data=" + JSON.stringify(data);
+
+
+    // new Ajax.request("????", {
+    //     method: "post",
+    //     parameters: param,
     //     onSuccess: initSchedules,
     //     onFailure: ajaxFaulure,
     //     onException: ajaxFaulure
     // })
+    $("testing").innerText = param;
     initSchedules();
 }
 

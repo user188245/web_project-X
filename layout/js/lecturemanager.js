@@ -6,8 +6,7 @@ var tempTimeList = [];
 var mode = 0;
 var target = 0;
 
-function SendLecture(method,tableName,lecture) {
-    this.method = method;
+function SendLecture(tableName,lecture) {
     this.tableName = tableName;
     this.lecture = lecture;
 }
@@ -139,8 +138,8 @@ function reportAdder(event) {
         method = "modify";
     }
     prepareLectureView();
-    var send = new SendLecture(method,"N/A",lecture);
-    $("testing").innerText = JSON.stringify(send);
+    var send = new SendLecture("N/A",lecture);
+    postData(method,send);
     popup.style.setProperty("display","none");
     mode = 0;
 }
@@ -167,8 +166,8 @@ function removeLecture(event) {
         var lecture = lectureList[index];
         lectureList.splice(index, 1);
         prepareLectureView();
-        var send = new SendLecture("remove","N/A",lecture.name);
-        $("testing").innerText = JSON.stringify(send);
+        var send = new SendLecture("N/A",lecture.name);
+        postData("remove",send);
     }
 }
 
@@ -178,6 +177,7 @@ function removeTime(event) {
 }
 
 function prepareTimeView(){
+
     clearElement("lec_add_timeList");
     var ul = $("lec_add_timeList");
     try {
@@ -202,16 +202,38 @@ function prepareTimeView(){
     }
 }
 
-function init(){
-    var send = new SendLecture("get","N/A",null);
-    $("testing").innerText = JSON.stringify(send);
+function postData(method,data) {
+    var csrftoken = "REMOVE_THIS";
+    var param = "csrfmiddlewaretoken=" + csrftoken + "&method=" + method +"&data=" + JSON.stringify(data);
     // new Ajax.request("????", {
     //     method: "post",
-    //     parameters: JSON.stringify(send),
+    //     parameters: param,
+    //     onSuccess: postSuccess,
+    //     onFailure: ajaxFaulure,
+    //     onException: ajaxFaulure
+    // })
+    $("testing").innerText = param;
+}
+
+function postSuccess(ajax) {
+    alert("성공적으로 요청되었습니다.");
+}
+
+function init(){
+    var data = new SendLecture("N/A",null);
+
+    var csrftoken = "REMOVE_THIS";
+    var param = "csrfmiddlewaretoken=" + csrftoken + "&method=" + "get" +"&data=" + JSON.stringify(data);
+
+
+    // new Ajax.request("????", {
+    //     method: "post",
+    //     parameters: param,
     //     onSuccess: initLectures,
     //     onFailure: ajaxFaulure,
     //     onException: ajaxFaulure
     // })
+    $("testing").innerText = param;
     initLectures();
 }
 
@@ -235,6 +257,7 @@ document.observe('dom:loaded', function() {
     $("lecture_add").observe("click",openAdder);
     $("lec_add_cancel").observe("click",closeAdder);
     $("lec_add_ok").observe("click",reportAdder);
+    $("lec_add_timeButton").observe("click",addTime);
     init();
     dragElement($("addpopup"));
 });

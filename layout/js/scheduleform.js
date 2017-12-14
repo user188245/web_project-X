@@ -19,6 +19,8 @@ var Month= ["January","February","March","April","May","June","July","August","S
 
 }());
 
+
+
 function getTime(hour,minute){
     hour = (hour + parseInt(minute / 60,10)).toString();
     minute = (minute % 60).toString();

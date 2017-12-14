@@ -11,6 +11,10 @@ var uDate = new Date();
 
  */
 
+function SendDate(date) {
+    this.date = date;
+}
+
 
 function WeeklyTimeTable(timeTable){
 
@@ -165,18 +169,22 @@ WeeklyTimeTable.prototype = {
 };
 
 var rectOnClickRegularEvent = function(){
-    alert("Selected Lecture-Unit : " + this.schedule.toString() + " & Selected Lecture : " + this.lecture.toString());
     $("plan_info").style.setProperty("display","none");
     $("lec_info").style.setProperty("display","block");
     $("lec_info_name").innerText = this.lecture.name;
     $("lec_info_instructor").innerText = this.lecture.instructor;
-    $("lec_info_activation").innerText = (this.schedule.isInactive)?"No":"Yes";
+    $("lec_info_homepage").innerText = this.lecture.homepage;
+    if(this.schedule.isInactive) {
+        $("lec_info_invalid").setAttribute("checked", "checked");
+    }
+    else{
+        $("lec_info_invalid").removeAttribute("checked");
+    }
     $("lec_info_period").innerText = this.schedule.scheduleTime;
     $("lec_info_location").innerText = this.schedule.location;
 };
 
 var rectOnClickIrregularEvent = function(){
-    alert(this.schedule.toString());
     $("lec_info").style.setProperty("display","none");
     $("plan_info").style.setProperty("display","block");
     $("plan_info_name").innerText = this.schedule.name;
@@ -185,17 +193,13 @@ var rectOnClickIrregularEvent = function(){
     $("plan_info_location").innerText = this.schedule.location;
 };
 
-function SendDate(year,month,day){
-    this.year = year;
-    this.month = month+1;
-    this.day = day;
-}
 
+function ajax_TimeTable(date){
+    uDate = new Date(date);
 
-function ajax_TimeTable(senddate){
-    alert("ajax 요청예정 : (" + senddate.year + "," + senddate.month + "," + senddate.day + ")" + " 의 파라미터");
-    uDate = new Date(senddate.year,senddate.month-1,senddate.day,0,0,0,0);
-    var param = JSON.stringify(senddate);
+    var csrftoken = "REMOVE_THIS";
+
+    var param = "csrfmiddlewaretoken=" + csrftoken + "&data=" + JSON.stringify(date);
     alert(param);
     // new Ajax.request("여기에 서버url을 넣는다.", {
     //     method: "post",
@@ -344,7 +348,7 @@ function createRandomColor(){
 
 function datepicker_event(event) {
     var d = this.valueAsDate;
-    ajax_TimeTable(new SendDate(d.getFullYear(),d.getMonth(),d.getDate()));
+    ajax_TimeTable(new SendDate(d.toISOString()));
 }
 
 function info_hide_event(event) {
@@ -353,7 +357,7 @@ function info_hide_event(event) {
 
 document.observe('dom:loaded', function() {
     var d = new Date();
-    var senddate = new SendDate(d.getFullYear(),d.getMonth(),d.getDate());
+    var senddate = new SendDate(d.toISOString());
 
     var weeklyTimeTables = $$("div.weeklyTimeTable");
     for(var i=0; i<weeklyTimeTables.length; i++) {
