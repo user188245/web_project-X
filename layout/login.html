@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+	<meta charset="UTF-8">
 	<title>Timetable</title>
 	<link rel="stylesheet" type="text/css" href="styles/login.css">
 </head>
@@ -14,6 +15,12 @@
 </div>
 <div id="btn">
 	<a href="index.html"><input type="submit" name="submit" value="LOG IN" /></a>
+
 </div>
+<div>
+	<a href="{% url 'signup' %}"><input type="submit" name="submit" value="Signup" /></a>
+	<a href="{% url 'social:begin' 'google-oauth2' %}"><button class="btn btn-danger">G+ Login</button></a>
+</div>
+
 </body>
 </html>

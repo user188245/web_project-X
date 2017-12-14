@@ -32,8 +32,8 @@ div.weeklyTimeTable{
 }
 
 div.weeklyTimeTable rect.topHeader{
-    fill: #fcc64580;
-    stroke: #40404030;
+    fill: rgba(252, 198, 69, 0.5);
+    stroke: rgba(64, 64, 64, 0.2);
     stroke-width:1;
 }
 
@@ -45,7 +45,7 @@ div.weeklyTimeTable text.topHeader{
 
 div.weeklyTimeTable rect.xHeader{
     fill: #f2fc9d;
-    stroke: #40404030;
+    stroke: rgba(64, 64, 64, 0.2);
     stroke-width:1;
 }
 
@@ -57,7 +57,7 @@ div.weeklyTimeTable text.xHeader{
 
 div.weeklyTimeTable rect.yHeader{
     fill: #f2fc9d;
-    stroke: #40404030;
+    stroke: rgba(64, 64, 64, 0.2);
     stroke-width:1;
 }
 
@@ -68,8 +68,8 @@ div.weeklyTimeTable text.yHeader{
 }
 
 div.weeklyTimeTable rect.table{
-    fill: #a2d6ea20;
-    stroke: #40404030;
+    fill: rgba(162, 214, 234, 0.15);
+    stroke: rgba(64, 64, 64, 0.2);
     stroke-width:1;
 }
 
