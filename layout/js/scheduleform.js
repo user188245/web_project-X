@@ -45,6 +45,10 @@ function clearElement(ElementId){
         e.removeChild(e.firstChild);
 }
 
+function parseScheduleTime(instance){
+    return new ScheduleTime(instance.start_hour,instance.start_min,instance.end_hour,instance.end_min);
+}
+
 function ScheduleTime(start_hour,start_min,end_hour,end_min){
     this.start_hour = start_hour;
     this.start_min  = start_min;

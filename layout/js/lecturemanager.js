@@ -184,7 +184,9 @@ function prepareTimeView(){
         for(var i=0; i<tempTimeList.length; i++) {
             var li = document.createElement("li");
             var s = tempTimeList[i];
-            li.appendChild(document.createTextNode("장소:" + s.location + ", 시간: (" + s.scheduleTime + "[" + Week[s.week] + "]" + ")　　"));
+            if(!(s.scheduleTime instanceof ScheduleTime))
+                s.scheduleTime = parseScheduleTime(s.scheduleTime);
+            li.appendChild(document.createTextNode("장소:" + s.location + ", 시간: (" + s.scheduleTime.toString() + "[" + Week[s.week] + "]" + ")　　"));
             li.setAttribute("class", "w3-display-container w3-light-grey");
 
             var close = document.createElement("span");
@@ -200,12 +202,144 @@ function prepareTimeView(){
     }
 }
 
+function init(){
+    var send = new SendLecture("get","N/A",null);
+    $("testing").innerText = JSON.stringify(send);
+    // new Ajax.request("????", {
+    //     method: "post",
+    //     parameters: JSON.stringify(send),
+    //     onSuccess: initLectures,
+    //     onFailure: ajaxFaulure,
+    //     onException: ajaxFaulure
+    // })
+    initLectures();
+}
+
+function ajaxFaulure(ajax, exception) {
+    alert("Error : \n[Server_status]:" +  ajax.status + "\n[message]:" + ajax.responseText);
+    if(exception){
+        throw exception;
+    }
+}
+
+function initLectures(ajax) {
+    // var json = JSON.parse(ajax.responseText);
+    var json = JSON.parse(sample);
+    lectureList = json.lectureList;
+    prepareLectureView();
+}
+
 
 
 document.observe('dom:loaded', function() {
-    $("s_add").observe("click",openAdder);
-    $("s_add_cancel").observe("click",closeAdder);
-    $("s_add_ok").observe("click",reportAdder);
-
+    $("lecture_add").observe("click",openAdder);
+    $("lec_add_cancel").observe("click",closeAdder);
+    $("lec_add_ok").observe("click",reportAdder);
+    init();
     dragElement($("addpopup"));
 });
+
+
+var sample = "{\n" +
+    "  \"lectureList\": [\n" +
+    "    {\n" +
+    "      \"name\": \"취침학개론\",\n" +
+    "      \"instructor\": \"최드르렁\",\n" +
+    "      \"scheduleList\": [\n" +
+    "        {\n" +
+    "          \"scheduleTime\": {\n" +
+    "            \"start_hour\": 10,\n" +
+    "            \"start_min\": 0,\n" +
+    "            \"end_hour\": 11,\n" +
+    "            \"end_min\": 30\n" +
+    "          },\n" +
+    "          \"week\": 0,\n" +
+    "          \"location\": \"제1 취침관 201호\",\n" +
+    "          \"isCanceled\": false\n" +
+    "        },\n" +
+    "        {\n" +
+    "          \"scheduleTime\": {\n" +
+    "            \"start_hour\": 10,\n" +
+    "            \"start_min\": 0,\n" +
+    "            \"end_hour\": 12,\n" +
+    "            \"end_min\": 30\n" +
+    "          },\n" +
+    "          \"week\": 2,\n" +
+    "          \"location\": \"제3 숙면관 403호\",\n" +
+    "          \"isCanceled\": false\n" +
+    "        }\n" +
+    "      ],\n" +
+    "      \"homepage\": \"http://www.durrung.hanyang.ac.kr/lec/sleep2040.html\"\n" +
+    "    },\n" +
+    "    {\n" +
+    "      \"name\": \"대학수면학특론\",\n" +
+    "      \"instructor\": \"쿨쿨자\",\n" +
+    "      \"scheduleList\": [\n" +
+    "        {\n" +
+    "          \"scheduleTime\": {\n" +
+    "            \"start_hour\": 13,\n" +
+    "            \"start_min\": 0,\n" +
+    "            \"end_hour\": 16,\n" +
+    "            \"end_min\": 0\n" +
+    "          },\n" +
+    "          \"week\": 0,\n" +
+    "          \"location\": \"컨퍼런슬립홀 중강당\",\n" +
+    "          \"isCanceled\": false\n" +
+    "        },\n" +
+    "        {\n" +
+    "          \"scheduleTime\": {\n" +
+    "            \"start_hour\": 9,\n" +
+    "            \"start_min\": 0,\n" +
+    "            \"end_hour\": 10,\n" +
+    "            \"end_min\": 30\n" +
+    "          },\n" +
+    "          \"week\": 3,\n" +
+    "          \"location\": \"제1 숙면관 203호\",\n" +
+    "          \"isCanceled\": false\n" +
+    "        }\n" +
+    "      ],\n" +
+    "      \"homepage\": \"http://www.zrg.hanyang.ac.kr/class/slp4044/2017\"\n" +
+    "    },\n" +
+    "    {\n" +
+    "      \"name\": \"침대세팅방법론\",\n" +
+    "      \"instructor\": \"김나잇\",\n" +
+    "      \"scheduleList\": [\n" +
+    "        {\n" +
+    "          \"scheduleTime\": {\n" +
+    "            \"start_hour\": 14,\n" +
+    "            \"start_min\": 30,\n" +
+    "            \"end_hour\": 16,\n" +
+    "            \"end_min\": 0\n" +
+    "          },\n" +
+    "          \"week\": 1,\n" +
+    "          \"location\": \"제3 취침관 501호\",\n" +
+    "          \"isCanceled\": false\n" +
+    "        },\n" +
+    "        {\n" +
+    "          \"scheduleTime\": {\n" +
+    "            \"start_hour\": 14,\n" +
+    "            \"start_min\": 30,\n" +
+    "            \"end_hour\": 16,\n" +
+    "            \"end_min\": 0\n" +
+    "          },\n" +
+    "          \"week\": 4,\n" +
+    "          \"location\": \"제3 취침관 406호\",\n" +
+    "          \"isCanceled\": false\n" +
+    "        },\n" +
+    "        {\n" +
+    "          \"scheduleTime\": {\n" +
+    "            \"start_hour\": 16,\n" +
+    "            \"start_min\": 0,\n" +
+    "            \"end_hour\": 17,\n" +
+    "            \"end_min\": 30\n" +
+    "          },\n" +
+    "          \"week\": 4,\n" +
+    "          \"location\": \"제4 취침관 301호 수면실습실\",\n" +
+    "          \"isCanceled\": false\n" +
+    "        }\n" +
+    "      ],\n" +
+    "      \"homepage\": \"http://www.jajanglab.hanyang.ac.kr/bed2017/class/0\"\n" +
+    "    }\n" +
+    "  ]\n" +
+    "}";
+
