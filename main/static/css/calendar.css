@@ -1,3 +1,12 @@
+#calender, #schedule {
+    width: 80%;
+    margin: auto;
+}
+
+#schedule {
+    margin-bottom: 40px;
+}
+
 * {
     box-sizing: border-box;
 }
@@ -8,6 +17,23 @@ ul {
 
 body {
     font-family: Verdana, sans-serif;
+}
+
+nav {
+    float: right;
+    margin: 5px 12px;
+}
+
+#s_popup {
+    width: 300pt;
+    height: 300pt;
+    left: 50%;
+    top: 50%;
+    position: absolute;
+    z-index: 3;
+    margin-left: -150pt;
+    margin-top: -150pt;
+    display: none;
 }
 
 .month {
@@ -39,6 +65,13 @@ body {
     padding-top: 10px;
 }
 
+.weekdays li, .days li {
+    border: 2px solid #999;
+    text-align: center;
+    width: 14.2%;
+    vertical-align: middle;
+}
+
 .weekdays {
     margin: 0;
     padding: 10px 0;
@@ -48,7 +81,7 @@ body {
 .weekdays li {
     display: inline-block;
     width: 13.6%;
-    color: #666;
+    color: black;
     text-align: center;
 }
 
@@ -56,6 +89,7 @@ body {
     padding: 10px 0;
     background: #eee;
     margin: 0;
+    height: 450px;
 }
 
 .days li {
@@ -63,9 +97,11 @@ body {
     display: inline-block;
     width: 13.6%;
     text-align: center;
+    margin-right: 5.5px;
     margin-bottom: 5px;
-    font-size:12px;
-    color: #777;
+    font-size: 15px;
+    color: black;
+    height: 60px;
 }
 
 .days li .active {

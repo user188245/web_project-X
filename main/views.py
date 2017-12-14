@@ -27,7 +27,7 @@ def classtime_ajax(request):
         semester_rows = Semester.objects.filter(user_id_id=request.user.user_id)
         semester_id = 0
         for semester_row in semester_rows:
-            if (semester_row.start_day < date) and (semester_row.end_day > date):
+            if (semester_row.start_day <= date) and (semester_row.end_day >= date):
                 semester_id = semester_row.semester_id
                 current_semester = semester_row
                 break

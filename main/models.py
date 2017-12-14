@@ -9,8 +9,7 @@ class Semester(models.Model):
     )
     semester_name = models.CharField(
         verbose_name='semester_name',
-        max_length=31,
-        unique=True
+        max_length=31
     )
     start_day = models.DateField(
         verbose_name='start_day'
