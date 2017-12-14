@@ -60,6 +60,11 @@ WeeklyTimeTable.prototype = {
         if(date !== null) {this.date = date;}
         this.refresh();
     },
+    resize: function (width,height) {
+        this.width = width;
+        this.height=height;
+        this.refresh();
+    },
     refresh: function () {
         while (this.svg.firstChild) {
             this.svg.removeChild(this.svg.firstChild);
@@ -120,7 +125,7 @@ WeeklyTimeTable.prototype = {
             var targetY = yStart+yUnit*(sUnit.scheduleTime.getFloatStart() - this.startTime)*(60/this.interval);
             var targetHeight = yUnit*sUnit.scheduleTime.getFloatTime()*(60/this.interval);
             rect = this.createRect(xStart+xUnit*((sUnit.date.getDay() + 6) % 7) ,targetY,xUnit,targetHeight,"lecture");
-            rect.style.setProperty("fill",createRandomColor());
+            rect.style.setProperty("fill",sUnit.saperatingColor);
             rect.style.setProperty("opacity","0.95");
             this.createText(xStart+xUnit*((sUnit.date.getDay() + 6) % 7) ,targetY,0,0,null,"hanging",sUnit.name + "/" + sUnit.location,"lecture").setAttribute("id","import_wrap");
             d3plus.textwrap().container("#import_wrap:last-child").resize(false).draw();
@@ -282,7 +287,7 @@ function processTimeTable(ajax){
             }
             for(var j=0; j < json.exceptionalSchduleList.length; j++){
                 var jex = json.exceptionalSchduleList[j];
-                weeklyTimeTable.exceptionalList.push(new IrregularSchedule(jex.name,jex.location,jex.text,new ScheduleTime(jex.startHour,jex.startMinute,jex.endHour,jex.endMinute),new Date(jex.date.year,jex.date.month-1,jex.date.day,0,0,0,0)));
+                weeklyTimeTable.exceptionalList.push(new IrregularSchedule(jex.name,jex.location,jex.text,new ScheduleTime(jex.startHour,jex.startMinute,jex.endHour,jex.endMinute),new Date(jex.date.year,jex.date.month-1,jex.date.day,0,0,0,0),createRandomColor()));
             }
             weeklyTimeTable.onCreate(json.name,9, 20, 60, uDate);
         }catch(err){
@@ -392,7 +397,7 @@ function datepicker_event(event) {
 }
 
 function info_hide_event(event) {
-    this.parentElement.style.setProperty("display","none");
+    this.parentElement.parentElement.style.setProperty("display","none");
     var inactive = $("lec_info_invalid").checked;
     if(selectedSchedule instanceof RegularSchedule && inactive !== selectedSchedule.isInactive){
         ajax_alterInactivation(new SendIA(selectedSchedule.lecture.name, selectedSchedule, selectedSchedule.isInactive));
@@ -416,7 +421,21 @@ document.observe('dom:loaded', function() {
     // footer파트의 info 설정
     $("lec_info_hide").observe("click",info_hide_event);
     $("plan_info_hide").observe("click",info_hide_event);
+
+    onsize();
+
+    //alert($("article").style.getPropertyValue("width"));
 });
+
+var onsize = function(event) {
+    var weeklyTimeTables = $$("div.weeklyTimeTable");
+    for(var i=0; i<weeklyTimeTables.length; i++) {
+        weeklyTimeTables[i].setAttribute("width",$("article").offsetWidth);
+        uTimeTable[i].resize($("article").offsetWidth,1200);
+    }
+};
+
+window.onresize = onsize;
 
 
 

@@ -138,12 +138,22 @@ RegularSchedule.prototype = {
 };
 
 
-function IrregularSchedule(name,location,text,scheduleTime,date){
+function IrregularSchedule(name,location,text,scheduleTime,date,saperatingColor){
     this.name = name;
     this.location = location;
     this.text = text;
     this.scheduleTime = scheduleTime;
     this.date = date;
+    this.saperatingColor = saperatingColor;
+    this.toJSON = function() {
+        return {
+            "name": this.name,
+            "location": this.location,
+            "text": this.text,
+            "scheduleTime": this.scheduleTime,
+            "date": this.date
+        };
+    };
 
 }
 

@@ -1,6 +1,5 @@
-#calender, #schedule {
-    width: 80%;
-    margin: auto;
+#calender, #s_list_outer, #addpopup {
+    padding: 20pt;
 }
 
 #schedule {
@@ -17,11 +16,6 @@ ul {
 
 body {
     font-family: Verdana, sans-serif;
-}
-
-nav {
-    float: right;
-    margin: 5px 12px;
 }
 
 #s_popup {
@@ -43,7 +37,7 @@ span#year {
 .month {
     padding: 70px 25px;
     width: 100%;
-    background: #1abc9c;
+    background: #673ab7;
     text-align: center;
 }
 
@@ -109,7 +103,7 @@ span#year {
 }
 
 .days li.active{
-    background: #1abc9c;
+    background: #673ab7;
     color: white !important
 }
 
