@@ -174,7 +174,7 @@ function reportAdder(event) {
     var startMinute = $("s_add_timeStart").valueAsDate.getMinutes();
     var endHour = $("s_add_timeEnd").valueAsDate.getUTCHours();
     var endMinute = $("s_add_timeEnd").valueAsDate.getMinutes();
-    var schedule = new IrregularSchedule(name,location,text,new ScheduleTime(startHour,startMinute,endHour,endMinute),currentDate.toISOString());
+    var schedule = new IrregularSchedule(name,location,text,new ScheduleTime(startHour,startMinute,endHour,endMinute),currentDate.toISOString(),null);
 
     var method = "N/A";
     if(mode === 1) {
@@ -186,7 +186,7 @@ function reportAdder(event) {
         method = "modify";
     }
     prepareScheduleView();
-    var send = new SendSchedule("N/A", schedule, "");
+    var send = new SendSchedule("N/A",schedule,null);
     postData(method,send);
     popup.style.setProperty("display","none");
     makeCalendar(currentDate);
@@ -224,7 +224,8 @@ function postSuccess(ajax) {
 }
 
 function init(){
-    var data = new SendSchedule("N/A","",currentDate.toISOString());
+    var data = new SendSchedule("N/A",null,currentDate.toISOString());
+
     var param = "csrfmiddlewaretoken=" + csrftoken + "&method=" + "get" +"&data=" + JSON.stringify(data);
 
     new Ajax.Request("get/", {
@@ -235,6 +236,7 @@ function init(){
         onException: ajaxFaulure
     });
     $("testing").innerText = param;
+    initSchedules();
 }
 
 function ajaxFaulure(ajax, exception) {
@@ -252,7 +254,7 @@ function initSchedules(ajax) {
         scheduleList[i] = [];
     for(var i=0; i<jscheduleList.length; i++){
         var s = jscheduleList[i];
-        var schedule = new IrregularSchedule(s.name,s.location,s.text,new ScheduleTime(s.startHour,s.startMinute,s.endHour,s.endMinute),new Date(s.date));
+        var schedule = new IrregularSchedule(s.name,s.location,s.text,new ScheduleTime(s.startHour,s.startMinute,s.endHour,s.endMinute),new Date(s.date),null);
         scheduleList[schedule.date.getDate()].push(schedule);
     }
 }
@@ -326,3 +328,4 @@ var sample = "{\n" +
     "    }\n" +
     "  ]\n" +
     "}";
+
