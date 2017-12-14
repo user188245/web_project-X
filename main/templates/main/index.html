@@ -12,7 +12,6 @@
             integrity="sha256-DZAnKJ/6XZ9si04Hgrsxu/8s717jcIzLy3oi35EouyE="
             crossorigin="anonymous"></script>
     <script>jQuery.noConflict();</script>
-    <script src="{% static 'js/ajax_csrf.js' %}" type="text/javascript" charset="UTF-8"></script>
 	<script src="{% static 'js/scheduleform.js' %}" type="text/javascript" charset="UTF-8"></script>
 	<script src="{% static 'js/weeklytimetable.js' %}" type="text/javascript" charset="UTF-8"></script>
 	<title>Timetable</title>
@@ -23,42 +22,51 @@
         // using jQuery
         var csrftoken = jQuery("[name=csrfmiddlewaretoken]").val();
     </script>
-	<nav>
-		<div>
-            <a href="{% url 'calendar' %}"><input type="submit" name="submit" value="일정표" /></a>
-            <a href="{% url 'lecture' %}"><input type="submit" name="submit" value="강의" /></a>
-            <a href="{% url 'semester' %}"><input type="submit" name="submit" value="학기" /></a>
-			<a href="{% url 'signin' %}"><input type="submit" name="submit" value="LOG IN" /></a>
-		</div>
+	<header class="w3-right">
+		<span>{{ request.user.username }}님 환영합니다.</span>
+		<a href="{% url 'signout' %}" class="w3-btn w3-round-xxlarge w3-black">LOGOUT</a>
+	</header>
+	<nav class="w3-bar w3-deep-purple">
+		<a href="{% url 'calendar' %}" class="w3-bar-item w3-button">내 일정</a>
+		<a href="{% url 'lecture' %}" class="w3-bar-item w3-button">내 강의</a>
+		<a href="{% url 'classtime' %}" class="w3-bar-item w3-button">시간표</a>
 	</nav>
-	<aside>
-		<h1>SELECT DATE</h1>
-		<input type="date" id="datepicker">
-	</aside>
-	<article>
-		<div class="weeklyTimeTable" width="1200" height="880"></div>
-		<div id="lec_info" class="popup">
-			<h2>COURSE INFO</h2>
-			<span>COURSE NAME:</span><span id="lec_info_name"></span><br>
-			<span>INSTRUCTOR:</span><span id="lec_info_instructor"></span><br>
-			<span>HOMEPAGE</span>:</span><span id="lec_info_homepage"></span><br>
-			<br>
-			<span>SELECTED_LESSON_PERIOD:</span><span id="lec_info_period"></span><br>
-			<span>SELECTED_LESSON_LOCATION:</span><span id="lec_info_location"></span><br>
-            IS_CANCELED:<input type="checkbox" id="lec_info_invalid"><br>
-			<input type="button" id="lec_info_hide" value="HIDE">
-		</div>
-		<div id="plan_info" class="popup">
-			<h2>PLAN INFO</h2>
-			<span>PLAN NAME:</span><span id="plan_info_name"></span><br>
-			<br>
-			<span>PLAN_DATE:</span><span id="plan_info_date"></span><br>
-			<span>PLAN_PERIOD:</span><span id="plan_info_period"></span><br>
-			<span>PLAN_LOCATION:</span><span id="plan_info_location"></span><br>
-			<input type="button" id="plan_info_hide" value="HIDE">
-		</div>
-	</article>
+	<div class="w3-container">
+		<aside>
+			날짜 변경<input type="date" id="datepicker">
+		</aside>
+
+		<article id="article">
+			<div class="weeklyTimeTable" width="2000" height="1200"></div>
+		</article>
+	</div>
 	<footer>
+		<div id="lec_info" class="popup w3-card-4 w3-display-middle">
+			<div class="w3-container w3-deep-purple">
+				<h2>COURSE INFO</h2>
+			</div>
+			<div id="lec_inner">
+					<span class="w3-col l12 w3-panel w3-border">COURSE NAME:<span id="lec_info_name"></span></span>
+					<span class="w3-col l12 w3-panel w3-border">INSTRUCTOR:<span id="lec_info_instructor"></span></span>
+					<span class="w3-col l12 w3-panel w3-border">HOMEPAGE:<span id="lec_info_homepage"></span></span>
+					<span class="w3-col l12 w3-panel w3-border">SELECTED_LESSON_PERIOD:<span id="lec_info_period"></span></span>
+					<span class="w3-col l12 w3-panel w3-border">SELECTED_LESSON_LOCATION:<span id="lec_info_location"></span></span>
+					IS_CANCELED:<input type="checkbox" id="lec_info_invalid" class="w3-check"><br>
+					<input type="button" id="lec_info_hide" value="HIDE" class="w3-button w3-deep-purple">
+			</div>
+		</div>
+		<div id="plan_info" class="popup w3-card-4 w3-display-middle">
+			<div class="w3-container w3-deep-purple">
+				<h2>PLAN INFO</h2>
+			</div>
+			<div id="plan_inner">
+				<span class="w3-col l12 w3-panel w3-border">PLAN NAME:<span id="plan_info_name"></span></span><br>
+				<span class="w3-col l12 w3-panel w3-border">PLAN_DATE:<span id="plan_info_date"></span></span><br>
+				<span class="w3-col l12 w3-panel w3-border">PLAN_PERIOD:<span id="plan_info_period"></span></span><br>
+				<span class="w3-col l12 w3-panel w3-border">PLAN_LOCATION:<span id="plan_info_location"></span></span><br>
+				<input type="button" id="plan_info_hide" value="HIDE" class="w3-button w3-deep-purple">
+			</div>
+		</div>
 	</footer>
 </body>
 </html>

@@ -10,20 +10,6 @@ def signin(request):
     signinform = SigninForm()
     if request.method == 'POST':
         signinform = SigninForm(request.POST)
-        # if signinform.is_valid():
-        #     email = request.email
-        #     # email = signinform.cleaned_data['email']
-        #     # password = signinform.cleaned_data['password']
-        #     user = authenticate(email=email, password=password)
-        #     if user is not None:
-        #         login(request, user)
-        #         return HttpResponseRedirect(
-        #             reverse('classtime')
-        #         )
-        #     else:
-        #         return render(request, "accounts/login.html", {
-        #             "signinform": signinform
-        #         })
         email = request.POST['email']
         password = request.POST['password']
         user = authenticate(email=email, password=password)
