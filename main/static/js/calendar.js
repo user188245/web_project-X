@@ -24,14 +24,15 @@ function getStartWeek(date) {
 
 function makeli(param,active) {
     var li = document.createElement("li");
-    if(active){
-        var span = document.createElement("span");
-        span.setAttribute("class","active");
-        span.appendChild(document.createTextNode(param));
-        li.appendChild(span);
-    }else
-        li.appendChild(document.createTextNode(param));
+    if(active)
+        li.setAttribute("class","active");
+    li.appendChild(document.createTextNode(param));
     if(Number.isInteger(param)) {
+        if(scheduleList[param] !== undefined && scheduleList[param].length > 0){
+            var star = document.createElement("span");
+            star.appendChild(document.createTextNode("*"));
+            li.appendChild(star);
+        }
         li.day = param;
         li.observe("click",moveCalendar);
     }
@@ -46,15 +47,15 @@ function moveCalendar(e) {
 
 function prevCalendar(e) {
     currentDate.setMonth(currentDate.getMonth()-1);
-    makeCalendar(currentDate);
     init();
+    makeCalendar(currentDate);
     prepareScheduleView();
 }
 
 function nextCalendar(e) {
     currentDate.setMonth(currentDate.getMonth()+1);
-    makeCalendar(currentDate);
     init();
+    makeCalendar(currentDate);
     prepareScheduleView();
 }
 
@@ -83,8 +84,7 @@ function makeCalendar(date) {
 
 //method : get/add/modify/remove
 
-function SendSchedule(method,tableName,schedule,date) {
-    this.method = method;
+function SendSchedule(tableName,schedule,date) {
     this.tableName = tableName;
     this.schedule = schedule;
     this.date = date;
@@ -122,7 +122,7 @@ function prepareScheduleView(){
             ul.appendChild(li);
         }
     }catch(e){
-        alert("error on prepare")
+        alert("error on prepare : date =" + currentDate.getDate());
         alert(e.message);
     }
 }
@@ -186,9 +186,10 @@ function reportAdder(event) {
         method = "modify";
     }
     prepareScheduleView();
-    var send = new SendSchedule(method,"N/A",schedule,null);
-    $("testing").innerText = JSON.stringify(send);
+    var send = new SendSchedule("N/A",schedule,null);
+    postData(method,send);
     popup.style.setProperty("display","none");
+    makeCalendar(currentDate);
     mode = 0;
 }
 
@@ -197,22 +198,44 @@ function removeSchedule(event) {
         var schedule = scheduleList[currentDate.getDate()][this.index];
         scheduleList[currentDate.getDate()].splice(this.index, 1);
         prepareScheduleView();
-        var send = new SendSchedule("remove","N/A",schedule.name,null);
-        $("testing").innerText = JSON.stringify(send);
+        var send = new SendSchedule("N/A",schedule.name,null);
+        postData("remove",send);
+
+        makeCalendar(currentDate);
     }
 }
 
-function init(){
-    var send = new SendSchedule("get","N/A",null,currentDate.toISOString());
-    $("testing").innerText = JSON.stringify(send);
+function postData(method,data) {
+    var csrftoken = "REMOVE_THIS";
+    var param = "csrfmiddlewaretoken=" + csrftoken + "&method=" + method +"&data=" + JSON.stringify(data);
+
     // new Ajax.request("????", {
     //     method: "post",
-    //     parameters: JSON.stringify(send),
-    //     onSuccess: initSchedules,
+    //     parameters: param,
+    //     onSuccess: postSuccess,
     //     onFailure: ajaxFaulure,
     //     onException: ajaxFaulure
     // })
-    initSchedules();
+    $("testing").innerText = param;
+
+}
+
+function postSuccess(ajax) {
+    alert("성공적으로 요청되었습니다.");
+}
+
+function init(){
+    var data = new SendSchedule("N/A","",currentDate.toISOString());
+    var param = "csrfmiddlewaretoken=" + csrftoken + "&method=" + "get" +"&data=" + JSON.stringify(data);
+
+    new Ajax.Request("get/", {
+        method: "post",
+        parameters: param,
+        onSuccess: initSchedules,
+        onFailure: ajaxFaulure,
+        onException: ajaxFaulure
+    })
+    $("testing").innerText = param;
 }
 
 function ajaxFaulure(ajax, exception) {
@@ -223,10 +246,10 @@ function ajaxFaulure(ajax, exception) {
 }
 
 function initSchedules(ajax) {
-    // var json = JSON.parse(ajax.responseText);
-    var json = JSON.parse(sample);
+    var json = JSON.parse(ajax.responseText);
+    // var json = JSON.parse(sample);
     var jscheduleList = json.scheduleList;
-    for(var i=1; i<31; i++)
+    for(var i=1; i<=31; i++)
         scheduleList[i] = [];
     for(var i=0; i<jscheduleList.length; i++){
         var s = jscheduleList[i];
@@ -243,7 +266,6 @@ function initSchedules(ajax) {
 
 document.observe('dom:loaded', function() {
     currentDate = new Date();
-    makeCalendar(currentDate);
     var prevs = $$(".prev");
     var nexts = $$(".next");
     for(var i=0; i<prevs.length; i++){
@@ -256,6 +278,7 @@ document.observe('dom:loaded', function() {
     $("s_add_cancel").observe("click",closeAdder);
     $("s_add_ok").observe("click",reportAdder);
     init();
+    makeCalendar(currentDate);
     //alert("첫번째날 요일 : " + Week[startWeek] + "," + "최대 날 : " + maxDate);
 
 

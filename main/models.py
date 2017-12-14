@@ -9,13 +9,13 @@ class Semester(models.Model):
     )
     semester_name = models.CharField(
         verbose_name='semester_name',
-        max_length=31
+        max_length=32,
     )
     start_day = models.DateField(
-        verbose_name='start_day'
+        verbose_name='start_day',
     )
     end_day = models.DateField(
-        verbose_name='end_day'
+        verbose_name='end_day',
     )
     user_id = models.ForeignKey(
         'accounts.User',
@@ -34,26 +34,26 @@ class Semester(models.Model):
 class Class(models.Model):
     class_id = models.AutoField(
         verbose_name='class_id',
-        primary_key=True
+        primary_key=True,
     )
     class_name = models.CharField(
         verbose_name='class_name',
-        max_length=127
+        max_length=128,
     )
     professor = models.CharField(
         verbose_name='professor',
-        max_length=31
+        max_length=33,
     )
     credit = models.IntegerField(verbose_name='credit')
     homepage = models.CharField(
         verbose_name='homepage',
-        max_length=511,
+        max_length=512,
         null=True
     )
     semester_id = models.ForeignKey(
         'main.Semester',
         verbose_name='semester_id',
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
     )
     objects = models.Manager
 
@@ -95,25 +95,29 @@ class Calendar(models.Model):
         verbose_name='calendar_id',
         primary_key=True
     )
-    class_id = models.ForeignKey(
-        'main.Class',
-        verbose_name='class_id',
+    user_id = models.ForeignKey(
+        'accounts.User',
+        verbose_name='user_id',
         on_delete=models.CASCADE
     )
     date = models.DateField(verbose_name='date')
     title = models.CharField(
         verbose_name='title',
-        max_length=255,
+        max_length=256,
         null=False
     )
     text = models.TextField(verbose_name='text')
     place = models.CharField(
         verbose_name='place',
-        max_length=127
+        max_length=127,
     )
     start_time = models.TimeField(verbose_name='start_time')
     end_time = models.TimeField(verbose_name='end_time')
     objects = models.Manager
+    class_id = models.IntegerField(
+        verbose_name='class_id',
+        null=True,
+    )
 
     def create(self):
         self.save()
@@ -137,7 +141,10 @@ class Memo(models.Model):
         max_length=255,
         null=False
     )
-    text = models.TextField(verbose_name='text')
+    text = models.TextField(
+        verbose_name='text',
+        null=True
+    )
     created_date = models.DateTimeField(
         verbose_name='created_time',
         default=timezone.now)

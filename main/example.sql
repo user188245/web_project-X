@@ -15,10 +15,10 @@ insert into main_classtime(weekday, start_time, end_time, location, class_id_id)
 insert into main_classtime(weekday, start_time, end_time, location, class_id_id) values(4, '13:00', '14:30', '제1공학관 101호', 3);
 insert into main_classtime(weekday, start_time, end_time, location, class_id_id) values(5, '10:00', '17:00', '미정', 1);
 
-insert into main_calendar(date, title, text, place, start_time, end_time, class_id_id) values ('2017-12-14', '예제 일정1', '예제 일정입니다.1', '미정', '14:00', '15:30', 4);
-insert into main_calendar(date, title, text, place, start_time, end_time, class_id_id) values ('2017-12-15', '예제 일정2', '예제 일정입니다.2', '미정', '09:00', '10:30', 1);
-insert into main_calendar(date, title, text, place, start_time, end_time, class_id_id) values ('2017-12-17', '예제 일정3', '예제 일정입니다.3', '미정', '09:00', '10:30', 1);
-insert into main_calendar(date, title, text, place, start_time, end_time, class_id_id) values ('2017-12-18', '예제 일정4', '예제 일정입니다.4', '미정', '10:30', '12:00', 1);
+insert into main_calendar(date, title, text, place, start_time, end_time, user_id_id, class_id) values ('2017-12-14', '예제 일정1', '예제 일정입니다.1', '미정', '14:00', '15:30', 1, 4);
+insert into main_calendar(date, title, text, place, start_time, end_time, user_id_id, class_id) values ('2017-12-15', '예제 일정2', '예제 일정입니다.2', '미정', '09:00', '10:30', 1, 1);
+insert into main_calendar(date, title, text, place, start_time, end_time, user_id_id, class_id) values ('2017-12-17', '예제 일정3', '예제 일정입니다.3', '미정', '09:00', '10:30', 1, 1);
+insert into main_calendar(date, title, text, place, start_time, end_time, user_id_id, class_id) values ('2017-12-18', '예제 일정4', '예제 일정입니다.4', '미정', '10:30', '12:00', 1, 1);
 
 
 

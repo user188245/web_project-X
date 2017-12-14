@@ -5,22 +5,22 @@ from django.contrib.auth.models import (
 
 # Create your models here.
 class UserManager(BaseUserManager):
-    def create_user(self, email, user_name, password=None):
+    def create_user(self, email, username, password=None):
         if not email:
             raise ValueError('이메일 주소를 입력하셔야 합니다.')
         user = self.model(
             email=UserManager.normalize_email(email),
-            user_name=user_name,
+            username=username,
         )
 
         user.set_password(password)
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, email, user_name, password):
+    def create_superuser(self, email, username, password):
         su = self.create_user(
             email=email,
-            user_name=user_name,
+            username=username,
             password=password,
         )
         su.is_admin = True
@@ -39,8 +39,8 @@ class User(AbstractBaseUser, PermissionsMixin):
         max_length=127,
         unique=True,
     )
-    user_name = models.CharField(
-        verbose_name='user_name',
+    username = models.CharField(
+        verbose_name='username',
         max_length=63,
         blank=False,
     )
@@ -51,14 +51,14 @@ class User(AbstractBaseUser, PermissionsMixin):
     objects = UserManager()
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['user_name']
+    REQUIRED_FIELDS = ['username']
 
 
     def get_full_name(self):
         return self.email
 
     def get_short_name(self):
-        return self.user_name
+        return self.username
 
     def __str__(self):
         return self.email

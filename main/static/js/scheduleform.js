@@ -19,6 +19,8 @@ var Month= ["January","February","March","April","May","June","July","August","S
 
 }());
 
+
+
 function getTime(hour,minute){
     hour = (hour + parseInt(minute / 60,10)).toString();
     minute = (minute % 60).toString();
@@ -43,6 +45,10 @@ function clearElement(ElementId){
     var e = $(ElementId);
     while(e.firstChild)
         e.removeChild(e.firstChild);
+}
+
+function parseScheduleTime(instance){
+    return new ScheduleTime(instance.start_hour,instance.start_min,instance.end_hour,instance.end_min);
 }
 
 function ScheduleTime(start_hour,start_min,end_hour,end_min){

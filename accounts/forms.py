@@ -15,7 +15,7 @@ class SignupForm(UserCreationForm):
             }
         ))
 
-    user_name = forms.RegexField(
+    username = forms.RegexField(
         label="이름",
         max_length=63,
         regex=r'^[\w .-]+$',
@@ -52,7 +52,7 @@ class SignupForm(UserCreationForm):
     class Meta:
         model = User
         # 작성한 필드만큼 화면에 보여짐
-        fields = ('email', 'user_name', 'password1', 'password2')
+        fields = ('email', 'username', 'password1', 'password2')
 
 
 # class SigninForm(AuthenticationForm):

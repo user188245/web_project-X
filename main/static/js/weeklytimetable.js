@@ -1,7 +1,4 @@
 "use strict";
-
-// jQuery.noConflict();
-
 var xmlns = "http://www.w3.org/2000/svg";
 
 
@@ -13,128 +10,13 @@ var uDate = new Date();
 
 
  */
-function getTime(hour,minute){
-    hour = (hour + parseInt(minute / 60,10)).toString();
-    minute = (minute % 60).toString();
 
-    if(hour < 10) {
-        hour = "0" + hour;
-    }
-    if(minute < 10) {
-        minute = "0" + minute;
-    }
-
-    var string =  hour + ":" + minute;
-
-    return string;
-}
-
-function getFormattedDate(date) {
-    return Month[date.getMonth()] + "," + date.getDate() + "," + date.getFullYear() + "(" + Week[(date.getDay() + 6) % 7] + ")";
-}
-
-function ScheduleTime(start_hour,start_min,end_hour,end_min){
-    this.start_hour = start_hour;
-    this.start_min  = start_min;
-    this.end_hour   = end_hour;
-    this.end_min    = end_min;
-}
-
-ScheduleTime.prototype = {
-    toString : function(){
-        return getTime(this.start_hour,this.start_min) + " ~ " + getTime(this.end_hour,this.end_min);
-    },
-    getHour : function(){
-        return this.end_hour - this.start_hour;
-    },
-    getMinute : function(){
-        return this.end_min - this.start_min;
-    },
-    getFloatTime : function(){
-        return this.getHour() + this.getMinute()/60;
-    },
-    getFloatStart : function(){
-        return this.start_hour + this.start_min/60;
-    },
-    getFloatEnd : function(){
-        return this.end_hour + this.end_min/60;
-    }
-};
-
-function Lecture(name,instructor,separatingColor){
-    this.name = name;
-    this.instructor = instructor;
-    this.separatingColor = separatingColor;
-    this.scheduleList = [];
-}
-
-Lecture.prototype = {
-    toString:function () {
-        return this.name + "," + this.instructor;
-    },
-	addRegularSchedule:function(regularSchedule){
-		this.scheduleList.push(regularSchedule);
-	},
-	addRegularScheduleCustom:function(start_hour,start_min,end_hour,end_min,week,location,isInactive,lecture){
-	    this.scheduleList.push(new RegularSchedule(new ScheduleTime(start_hour,start_min,end_hour,end_min), week, location, isInactive, lecture));
-    }
-};
-
-function RegularSchedule(scheduleTime,week,location,isInactive,lecture){
-	this.scheduleTime = scheduleTime;
-	this.week = week;
-	this.location = location;
-	this.lecture = lecture;
-	this.isInactive = isInactive;
-}
-
-RegularSchedule.prototype = {
-    toString : function(){
-        return this.scheduleTime.toString() + "," + Week[this.week] + "," + this.location;
-    }
-};
-
-var rectOnClickRegularEvent = function(){
-    // alert("Selected Lecture-Unit : " + this.schedule.toString() + " & Selected Lecture : " + this.lecture.toString());
-    $("plan_info").style.setProperty("display","none");
-    $("lec_info").style.setProperty("display","block");
-    $("lec_info_name").innerText = this.lecture.name;
-    $("lec_info_instructor").innerText = this.lecture.instructor;
-    $("lec_info_activation").innerText = (this.schedule.isInactive)?"No":"Yes";
-    $("lec_info_period").innerText = this.schedule.scheduleTime;
-    $("lec_info_location").innerText = this.schedule.location;
-};
-
-var rectOnClickIrregularEvent = function(){
-    // alert(this.schedule.toString());
-    $("lec_info").style.setProperty("display","none");
-    $("plan_info").style.setProperty("display","block");
-    $("plan_info_name").innerText = this.schedule.name;
-    $("plan_info_date").innerText = getFormattedDate(this.schedule.date);
-    $("plan_info_period").innerText = this.schedule.scheduleTime;
-    $("plan_info_location").innerText = this.schedule.location;
-};
-
-
-function IrregularSchedule(name,location,scheduleTime,date){
-    this.name = name;
-    this.location = location;
-    this.scheduleTime = scheduleTime;
+function SendDate(date) {
     this.date = date;
 }
 
-IrregularSchedule.prototype = {
-    toString : function () {
-        return this.name + "," + getFormattedDate(this.date) + "," +  this.scheduleTime.toString() +"," + this.location;
-    }
-};
-
-
-
-
 
 function WeeklyTimeTable(timeTable){
-
     this.svg = document.createElementNS(xmlns,"svg");
     this.style = window.getComputedStyle(timeTable,null);
 
@@ -286,18 +168,22 @@ WeeklyTimeTable.prototype = {
 };
 
 var rectOnClickRegularEvent = function(){
-    alert("Selected Lecture-Unit : " + this.schedule.toString() + " & Selected Lecture : " + this.lecture.toString());
     $("plan_info").style.setProperty("display","none");
     $("lec_info").style.setProperty("display","block");
     $("lec_info_name").innerText = this.lecture.name;
     $("lec_info_instructor").innerText = this.lecture.instructor;
-    $("lec_info_activation").innerText = (this.schedule.isInactive)?"No":"Yes";
+    $("lec_info_homepage").innerText = this.lecture.homepage;
+    if(this.schedule.isInactive) {
+        $("lec_info_invalid").setAttribute("checked", "checked");
+    }
+    else{
+        $("lec_info_invalid").removeAttribute("checked");
+    }
     $("lec_info_period").innerText = this.schedule.scheduleTime;
     $("lec_info_location").innerText = this.schedule.location;
 };
 
 var rectOnClickIrregularEvent = function(){
-    alert(this.schedule.toString());
     $("lec_info").style.setProperty("display","none");
     $("plan_info").style.setProperty("display","block");
     $("plan_info_name").innerText = this.schedule.name;
@@ -306,36 +192,30 @@ var rectOnClickIrregularEvent = function(){
     $("plan_info_location").innerText = this.schedule.location;
 };
 
-function SendDate(year,month,day){
-    this.year = year;
-    this.month = month+1;
-    this.day = day;
-}
 
-function ajax_TimeTable(senddate){
-    // alert("ajax 요청예정 : (" + senddate.year + "," + senddate.month + "," + senddate.day + ")" + " 의 파라미터");
-    // uDate = new Date(senddate.year,senddate.month-1,senddate.day,0,0,0,0);
-    // var param = JSON.parse(senddate);
-    var date = senddate.year + "-" + senddate.month + "-" + senddate.day;
-    new Ajax.Request("/get/", {
+function ajax_TimeTable(date){
+    uDate = new Date(date);
+
+    var param = "csrfmiddlewaretoken=" + csrftoken + "&data=" + JSON.stringify(date);
+    // alert(param);
+    new Ajax.Request("get/", {
         method: "post",
-        parameters: "csrfmiddlewaretoken=" + csrftoken + "&date=" + date,
+        parameters: param,
         onSuccess: processTimeTable,
         onFailure: ajaxFaulure,
         onException: ajaxFaulure
     });
-    // 빌드 확인용 코드 시작.
-    // processTimeTable();
-    // 빌드 확인용 코드 끝.
 }
 
-function ajaxFaulure () {
-    alert("Fail!")
+function ajaxFaulure(ajax, exception) {
+    alert("Error : \n[Server_status]:" +  ajax.status + "\n[message]:" + ajax.responseText);
+    if(exception){
+        throw exception;
+    }
 }
 
 function processTimeTable(ajax){
     var weeklyTimeTables = $$("div.weeklyTimeTable");
-    // alert(ajax.responseText);
     for(var i=0; i<weeklyTimeTables.length; i++) {
         try {
             var json = JSON.parse(ajax.responseText);
@@ -346,7 +226,7 @@ function processTimeTable(ajax){
 
             for(var i=0; i<json.lectureList.length; i++){
                 var jlec = json.lectureList[i];
-                var lec = new Lecture(jlec.name,jlec.instructor,createRandomColor());
+                var lec = new Lecture(jlec.name,jlec.instructor,jlec.homepage,createRandomColor());
                 for(var j=0; j < jlec.scheduleList.length; j++){
                     var jsch = jlec.scheduleList[j];
                     lec.addRegularScheduleCustom(jsch.startHour,jsch.startMinute,jsch.endHour,jsch.endMinute,jsch.week,jsch.location,jsch.isCanceled,lec);
@@ -355,7 +235,7 @@ function processTimeTable(ajax){
             }
             for(var j=0; j < json.exceptionalSchduleList.length; j++){
                 var jex = json.exceptionalSchduleList[j];
-                weeklyTimeTable.exceptionalList.push(new IrregularSchedule(jex.name,jex.location,new ScheduleTime(jex.startHour,jex.startMinute,jex.endHour,jex.endMinute),new Date(jex.date.year,jex.date.month-1,jex.date.day,0,0,0,0)));
+                weeklyTimeTable.exceptionalList.push(new IrregularSchedule(jex.name,jex.location,jex.text,new ScheduleTime(jex.startHour,jex.startMinute,jex.endHour,jex.endMinute),new Date(jex.date.year,jex.date.month-1,jex.date.day,0,0,0,0)));
             }
             weeklyTimeTable.onCreate(json.name,9, 20, 60, uDate);
         }catch(err){
@@ -386,6 +266,7 @@ var sampleJSON = "{\n" +
     "    {\n" +
     "      \"name\": \"취침학개론\",\n" +
     "      \"instructor\": \"최드르렁\",\n" +
+    "      \"homepage\":\"http://www.durrung.hanyang.ac.kr/lec/sleep2040.html\",\n" +
     "      \"scheduleList\": [\n" +
     "        {\n" +
     "          \"startHour\": 10,\n" +
@@ -410,6 +291,7 @@ var sampleJSON = "{\n" +
     "    {\n" +
     "      \"name\": \"대학수면학특론\",\n" +
     "      \"instructor\": \"쿨쿨자\",\n" +
+    "      \"homepage\":\"http://www.zrg.hanyang.ac.kr/class/slp4044/2017\",\n" +
     "      \"scheduleList\": [\n" +
     "        {\n" +
     "          \"startHour\": 13,\n" +
@@ -436,6 +318,7 @@ var sampleJSON = "{\n" +
     "    {\n" +
     "      \"name\": \"현대꿈해석학 초청강사특강\",\n" +
     "      \"location\": \"컨퍼런슬립홀 중강당\",\n" +
+    "      \"text\": \"특별 초청 강의, 다 듣고 마지막에 상품권 추첨하는거 잊지 않기\",\n" +
     "      \"startHour\": 13,\n" +
     "      \"startMinute\": 0,\n" +
     "      \"endHour\": 15,\n" +
@@ -458,7 +341,7 @@ function createRandomColor(){
 
 function datepicker_event(event) {
     var d = this.valueAsDate;
-    ajax_TimeTable(new SendDate(d.getFullYear(),d.getMonth(),d.getDate()));
+    ajax_TimeTable(new SendDate(d.toISOString()));
 }
 
 function info_hide_event(event) {
@@ -467,7 +350,7 @@ function info_hide_event(event) {
 
 document.observe('dom:loaded', function() {
     var d = new Date();
-    var senddate = new SendDate(d.getFullYear(),d.getMonth(),d.getDate());
+    var senddate = new SendDate(d.toISOString());
 
     var weeklyTimeTables = $$("div.weeklyTimeTable");
     for(var i=0; i<weeklyTimeTables.length; i++) {
@@ -484,3 +367,7 @@ document.observe('dom:loaded', function() {
     $("lec_info_hide").observe("click",info_hide_event);
     $("plan_info_hide").observe("click",info_hide_event);
 });
+
+
+
+

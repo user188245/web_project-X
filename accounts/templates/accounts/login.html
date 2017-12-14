@@ -38,6 +38,7 @@
 		</div>
     </form>
     <a href="{% url 'signup' %}"><input type="submit" name="submit" value="Signup" /></a>
+    <a href="{% url 'social:begin' 'google-oauth2' %}"><button class="btn btn-danger" style="width: 40%">G+ Login</button></a>
 	{% endif %}
 </body>
 </html>
