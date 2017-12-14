@@ -1,5 +1,5 @@
 from django import forms
-from .models import Semester
+from .models import Semester, Calendar
 
 
 class CreateSemester(forms.ModelForm):
@@ -34,3 +34,5 @@ class CreateSemester(forms.ModelForm):
     class Meta:
         model = Semester
         fields = ('semester_name', 'start_day', 'end_day')
+
+

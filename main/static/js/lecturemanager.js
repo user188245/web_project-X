@@ -203,15 +203,14 @@ function prepareTimeView(){
 }
 
 function postData(method,data) {
-    var csrftoken = "REMOVE_THIS";
     var param = "csrfmiddlewaretoken=" + csrftoken + "&method=" + method +"&data=" + JSON.stringify(data);
-    // new Ajax.request("????", {
-    //     method: "post",
-    //     parameters: param,
-    //     onSuccess: postSuccess,
-    //     onFailure: ajaxFaulure,
-    //     onException: ajaxFaulure
-    // })
+    new Ajax.Request("get/", {
+        method: "post",
+        parameters: param,
+        onSuccess: postSuccess,
+        onFailure: ajaxFaulure,
+        onException: ajaxFaulure
+    });
     $("testing").innerText = param;
 }
 
@@ -222,7 +221,6 @@ function postSuccess(ajax) {
 function init(){
     var data = new SendLecture("N/A",null);
     var param = "csrfmiddlewaretoken=" + csrftoken + "&method=" + "get" +"&data=" + JSON.stringify(data);
-
     new Ajax.Request("get/", {
         method: "post",
         parameters: param,

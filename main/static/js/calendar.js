@@ -186,7 +186,7 @@ function reportAdder(event) {
         method = "modify";
     }
     prepareScheduleView();
-    var send = new SendSchedule("N/A",schedule,null);
+    var send = new SendSchedule("N/A", schedule, "");
     postData(method,send);
     popup.style.setProperty("display","none");
     makeCalendar(currentDate);
@@ -206,16 +206,15 @@ function removeSchedule(event) {
 }
 
 function postData(method,data) {
-    var csrftoken = "REMOVE_THIS";
     var param = "csrfmiddlewaretoken=" + csrftoken + "&method=" + method +"&data=" + JSON.stringify(data);
 
-    // new Ajax.request("????", {
-    //     method: "post",
-    //     parameters: param,
-    //     onSuccess: postSuccess,
-    //     onFailure: ajaxFaulure,
-    //     onException: ajaxFaulure
-    // })
+    new Ajax.Request("get/", {
+        method: "post",
+        parameters: param,
+        onSuccess: postSuccess,
+        onFailure: ajaxFaulure,
+        onException: ajaxFaulure
+    })
     $("testing").innerText = param;
 
 }
@@ -234,7 +233,7 @@ function init(){
         onSuccess: initSchedules,
         onFailure: ajaxFaulure,
         onException: ajaxFaulure
-    })
+    });
     $("testing").innerText = param;
 }
 
@@ -257,10 +256,6 @@ function initSchedules(ajax) {
         scheduleList[schedule.date.getDate()].push(schedule);
     }
 }
-
-
-
-
 
 
 
@@ -331,4 +326,3 @@ var sample = "{\n" +
     "    }\n" +
     "  ]\n" +
     "}";
-

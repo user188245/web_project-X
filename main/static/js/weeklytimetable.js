@@ -4,6 +4,7 @@ var xmlns = "http://www.w3.org/2000/svg";
 
 
 var uTimeTable = [];
+var selectedSchedule;
 var uDate = new Date();
 
 /*
@@ -17,6 +18,7 @@ function SendDate(date) {
 
 
 function WeeklyTimeTable(timeTable){
+
     this.svg = document.createElementNS(xmlns,"svg");
     this.style = window.getComputedStyle(timeTable,null);
 
@@ -106,6 +108,7 @@ WeeklyTimeTable.prototype = {
                 }
                 this.createText(xStart+xUnit*sUnit.week ,targetY,0,0,null,"hanging",lec.name + "/" + sUnit.location,"lecture").setAttribute("id","import_wrap");
                 d3plus.textwrap().container("#import_wrap:last-child").resize(false).draw();
+
                 rect.lecture = lec;
                 rect.schedule = sUnit;
                 rect.addEventListener("click",rectOnClickRegularEvent);
@@ -174,13 +177,14 @@ var rectOnClickRegularEvent = function(){
     $("lec_info_instructor").innerText = this.lecture.instructor;
     $("lec_info_homepage").innerText = this.lecture.homepage;
     if(this.schedule.isInactive) {
-        $("lec_info_invalid").setAttribute("checked", "checked");
+        $("lec_info_invalid").checked = true;
     }
     else{
-        $("lec_info_invalid").removeAttribute("checked");
+        $("lec_info_invalid").checked = false;
     }
     $("lec_info_period").innerText = this.schedule.scheduleTime;
     $("lec_info_location").innerText = this.schedule.location;
+    selectedSchedule = this.schedule;
 };
 
 var rectOnClickIrregularEvent = function(){
@@ -190,14 +194,14 @@ var rectOnClickIrregularEvent = function(){
     $("plan_info_date").innerText = getFormattedDate(this.schedule.date);
     $("plan_info_period").innerText = this.schedule.scheduleTime;
     $("plan_info_location").innerText = this.schedule.location;
+    selectedSchedule = null;
 };
 
 
-function ajax_TimeTable(date){
-    uDate = new Date(date);
+function ajax_TimeTable(data){
+    uDate = new Date(data.date);
+    var param = "csrfmiddlewaretoken=" + csrftoken + "&data=" + JSON.stringify(data);
 
-    var param = "csrfmiddlewaretoken=" + csrftoken + "&data=" + JSON.stringify(date);
-    // alert(param);
     new Ajax.Request("get/", {
         method: "post",
         parameters: param,
@@ -205,6 +209,44 @@ function ajax_TimeTable(date){
         onFailure: ajaxFaulure,
         onException: ajaxFaulure
     });
+
+    alert(param);
+}
+
+function SendIA(name,schedule,isInactive){
+    this.name = name;
+    this.schedule = schedule;
+    this.isInactive = isInactive;
+}
+
+function ajax_alterInactivation(data) {
+    var csrftoken = "REMOVE_THIS";
+    var param = "csrfmiddlewaretoken=" + csrftoken + "&data=" + JSON.stringify(data);
+    // new Ajax.request("여기에 서버url을 넣는다.", {
+    //     method: "post",
+    //     parameters: param,
+    //     onSuccess: alterInactivation,
+    //     onFailure: ajaxFaulure,
+    //     onException: ajaxFaulure
+    // });
+
+    alert(param);
+    alterInactivation();
+}
+
+function alterInactivation(ajax) {
+    if(selectedSchedule !== undefined && selectedSchedule !== null){
+        if(selectedSchedule.isInactive) {
+            selectedSchedule.isInactive = false;
+        }
+        else {
+            selectedSchedule.isInactive = true;
+        }
+    }
+    for(var i=0; i<uTimeTable.length; i++) {
+        uTimeTable[i].refresh();
+    }
+
 }
 
 function ajaxFaulure(ajax, exception) {
@@ -346,6 +388,10 @@ function datepicker_event(event) {
 
 function info_hide_event(event) {
     this.parentElement.style.setProperty("display","none");
+    var inactive = $("lec_info_invalid").checked;
+    if(selectedSchedule instanceof RegularSchedule && inactive !== selectedSchedule.isInactive){
+        ajax_alterInactivation(new SendIA(selectedSchedule.lecture.name, selectedSchedule, selectedSchedule.isInactive));
+    }
 }
 
 document.observe('dom:loaded', function() {
@@ -356,7 +402,6 @@ document.observe('dom:loaded', function() {
     for(var i=0; i<weeklyTimeTables.length; i++) {
         uTimeTable[i] = new WeeklyTimeTable(weeklyTimeTables[i]);
     }
-    // 클라이언트가 세션을 보내는 행위는 json이 아닌 http 헤더단에서 이루어짐
 
     ajax_TimeTable(senddate);
     // date-picker를 세팅함
@@ -367,7 +412,6 @@ document.observe('dom:loaded', function() {
     $("lec_info_hide").observe("click",info_hide_event);
     $("plan_info_hide").observe("click",info_hide_event);
 });
-
 
 
 
