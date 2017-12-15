@@ -64,8 +64,16 @@ def classtime_ajax(request):
                     'endMinute': classtime_row.end_time.minute,
                     'week': classtime_row.weekday,
                     'location': classtime_row.location,
-                    'isCanceled': False
                 }
+                nolecture_calendar = Calendar.objects.filter(
+                    class_id=classtime_row.class_id_id,
+                    start_time=classtime_row.start_time,
+                    title=lecture_row.class_name + ' 휴강'
+                )
+                if len(nolecture_calendar) == 0:
+                    classtime_data['isCanceled'] = False
+                else:
+                    classtime_data['isCanceled'] = True
                 classtime_list.append(classtime_data)
 
             class_data['scheduleList'] = classtime_list

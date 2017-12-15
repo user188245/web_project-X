@@ -223,6 +223,7 @@ function SendIA(name,schedule,isInactive){
 
 function ajax_alterInactivation(data) {
     var param = "csrfmiddlewaretoken=" + csrftoken + "&data=" + JSON.stringify(data);
+    alert(param);
     new Ajax.request("get/", {
         method: "post",
         parameters: param,
