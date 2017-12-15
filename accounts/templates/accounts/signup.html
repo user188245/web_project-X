@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <form id="signup" class="form-horizontal" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    <!-- Email input-->
+    <!--<div class="row control-group">-->
+        <!--<div class="form-group col-xs-12 floating-label-form-group controls">-->
+            <!--{{ signupform.email.label_tag }}-->
+            <!--{{ signupform.email }}-->
+            <!--<span class="field-error">-->
+            <!--{{ signupform.email.errors|striptags }}-->
+            <!--</span>-->
+        <!--</div>-->
+    <!--</div>-->
+
+    <!--&lt;!&ndash; Username input&ndash;&gt;-->
+    <!--<div class="row control-group">-->
+        <!--<div class="form-group col-xs-12 floating-label-form-group controls">-->
+            <!--{{ signupform.user_name.label_tag }}-->
+            <!--{{ signupform.user_name }}-->
+            <!--<span class="field-error">-->
+            <!--{{ signupform.user_name.errors|striptags }}-->
+            <!--</span>-->
+        <!--</div>-->
+    <!--</div>-->
+
+    <!--&lt;!&ndash; Password1 input&ndash;&gt;-->
+    <!--<div class="row control-group">-->
+        <!--<div class="form-group col-xs-12 floating-label-form-group controls">-->
+            <!--{{ signupform.password1.label_tag }}-->
+            <!--{{ signupform.password1 }}-->
+            <!--<span class="field-error">-->
+            <!--{{ signupform.password1.errors|striptags }}-->
+            <!--</span>-->
+        <!--</div>-->
+    <!--</div>-->
+
+    <!--&lt;!&ndash; Password2 input&ndash;&gt;-->
+    <!--<div class="row control-group">-->
+        <!--<div class="form-group col-xs-12 floating-label-form-group controls">-->
+            <!--{{ signupform.password2.label_tag }}-->
+            <!--{{ signupform.password2 }}-->
+            <!--<span class="field-error">-->
+            <!--{{ signupform.password2.errors|striptags }}-->
+            <!--</span>-->
+        <!--</div>-->
+    <!--</div>-->
+        {{ signupform.as_p }}
+
+        <br>
+
+        <!-- Button -->
+        <div class="row">
+            <button type="submit" class="form-group col-xs-12">Sign Up</button><br/>
+            <hr/>
+                이미 이메일 주소가 있으시다면 <a href="{% url 'signin' %}"><u>로그인</u></a>하십시오.
+        </div>
+    </form>
+</body>
+</html>

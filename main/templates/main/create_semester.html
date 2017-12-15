@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <form method="post" action="{% url 'create_semester' %}">
+        <form>
+            {% csrf_token %}
+            <!--{{ createform.start_day|date:"Y-m-d" }}-->
+            {{ createform.as_p }}
+            <p><input type="submit" value="학기 등록"></p>
+        </form>
+    </form>
+</body>
+</html>

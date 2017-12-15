@@ -1,0 +1,19 @@
+body {
+	margin-top: 250px;
+}
+
+header {
+	margin: auto;
+	position: relative;
+	width: 250px;
+}
+
+div {
+	margin: auto;
+	position: relative;
+	width: 200px;
+}
+
+#btn {
+	margin-top: 30px;
+}

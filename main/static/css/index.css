@@ -1,0 +1,96 @@
+html{
+    overflow-x: scroll;
+}
+
+nav, aside, article {
+	border: 1px solid #999;
+}
+
+/*div {*/
+	/*float: right;*/
+	/*margin-top: 12px;*/
+/*}*/
+
+/*aside, article {*/
+	/*height: 600px;*/
+/*}*/
+
+/*nav {*/
+	/*margin-bottom: 5px;*/
+	/*height: 50px;*/
+/*}*/
+
+aside {
+    float: right;
+    z-index: 3;
+    position: relative;
+    text-align: center;
+}
+
+div.weeklyTimeTable{
+	position: absolute;
+}
+
+div.weeklyTimeTable rect.topHeader{
+    fill: rgba(252, 198, 69, 0.5);
+    stroke: rgba(64, 64, 64, 0.2);
+    stroke-width:1;
+}
+
+div.weeklyTimeTable text.topHeader{
+    font-size: 15pt;
+    font-family: sans-serif;
+    fill: Purple;
+}
+
+div.weeklyTimeTable rect.xHeader{
+    fill: #f2fc9d;
+    stroke: rgba(64, 64, 64, 0.2);
+    stroke-width:1;
+}
+
+div.weeklyTimeTable text.xHeader{
+    font-size: 10pt;
+    font-family: Arial;
+    fill: Blue;
+}
+
+div.weeklyTimeTable rect.yHeader{
+    fill: #f2fc9d;
+    stroke: rgba(64, 64, 64, 0.2);
+    stroke-width:1;
+}
+
+div.weeklyTimeTable text.yHeader{
+    font-size: 10pt;
+    font-family: serif;
+    fill: Red;
+}
+
+div.weeklyTimeTable rect.table{
+    fill: rgba(162, 214, 234, 0.15);
+    stroke: rgba(64, 64, 64, 0.2);
+    stroke-width:1;
+}
+
+div.weeklyTimeTable rect.lecture{
+    stroke: #404040;
+    stroke-width:1;
+}
+
+div.weeklyTimeTable text.lecture{
+    font-size: 8px;
+    font-weight: bold;
+    font-family: sans-serif;
+    fill: Black;
+}
+
+#lec_inner, #plan_inner{
+    padding: 50pt;
+
+}
+
+div.popup{
+    display: none;
+    background-color: cornsilk;
+}

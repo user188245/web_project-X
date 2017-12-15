@@ -1,0 +1,32 @@
+
+
+#lecture{
+    background: aliceblue;
+    padding: 20pt;
+}
+
+#lecture_popup {
+    display: None;
+}
+
+#addpopup_header {
+    cursor: move;
+}
+
+#addpopup {
+    position: absolute;
+    text-align: center;
+    border: 1px solid black;
+    top: 0;
+    left: 0;
+}
+
+#toindex {
+    float: right;
+    margin: 5px 12px;
+}
+
+#lecture {
+	width: 80%;
+	margin: auto;
+}
