@@ -210,8 +210,7 @@ function postData(method,data) {
         onSuccess: postSuccess,
         onFailure: ajaxFaulure,
         onException: ajaxFaulure
-    })
-    $("testing").innerText = param;
+    });
 }
 
 function postSuccess(ajax) {
@@ -228,8 +227,7 @@ function init(){
         onSuccess: initLectures,
         onFailure: ajaxFaulure,
         onException: ajaxFaulure
-    })
-    $("testing").innerText = param;
+    });
 }
 
 function ajaxFaulure(ajax, exception) {

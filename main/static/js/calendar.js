@@ -215,7 +215,6 @@ function postData(method,data) {
         onFailure: ajaxFaulure,
         onException: ajaxFaulure
     })
-    $("testing").innerText = param;
 
 }
 
@@ -235,7 +234,6 @@ function init(){
         onFailure: ajaxFaulure,
         onException: ajaxFaulure
     })
-    $("testing").innerText = param;
 }
 
 function ajaxFaulure(ajax, exception) {
