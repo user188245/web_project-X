@@ -219,7 +219,7 @@ function postSuccess(ajax) {
 }
 
 function init(){
-    var data = new SendLecture("N/A",null);
+    var data = new SendLecture("N/A","");
     var param = "csrfmiddlewaretoken=" + csrftoken + "&method=" + "get" +"&data=" + JSON.stringify(data);
 
     new Ajax.Request("get/", {

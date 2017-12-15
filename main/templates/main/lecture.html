@@ -23,12 +23,12 @@
     </script>
         <header class="w3-right">
             <span>{{ request.user.username }}님 환영합니다.</span>
-            <a href="login.html" class="w3-btn w3-round-xxlarge w3-black">LOGOUT</a>
+            <a href="{% url 'signout' %}" class="w3-btn w3-round-xxlarge w3-black">LOGOUT</a>
         </header>
         <nav class="w3-bar w3-deep-purple">
-            <a href="calender.html" class="w3-bar-item w3-button">내 일정</a>
-            <a href="lecture.html" class="w3-bar-item w3-button">내 강의</a>
-            <a href="index.html" class="w3-bar-item w3-button">시간표</a>
+            <a href="{% url 'calendar' %}" class="w3-bar-item w3-button">내 일정</a>
+            <a href="{% url 'lecture' %}" class="w3-bar-item w3-button">내 강의</a>
+            <a href="{% url 'classtime' %}" class="w3-bar-item w3-button">시간표</a>
         </nav>
     <div id="lecture" class="w3-card-4">
         <h2>내 강의</h2>
