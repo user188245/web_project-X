@@ -238,6 +238,9 @@ function ajaxFaulure(ajax, exception) {
 }
 
 function initLectures(ajax) {
+    if (ajax.responseText === 'No Data') {
+        return;
+    }
     var json = JSON.parse(ajax.responseText);
     // var json = JSON.parse(sample);
     lectureList = json.lectureList;

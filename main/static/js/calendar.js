@@ -244,6 +244,9 @@ function ajaxFaulure(ajax, exception) {
 }
 
 function initSchedules(ajax) {
+    if (ajax.responseText === 'No Data') {
+        return;
+    }
     var json = JSON.parse(ajax.responseText);
     // var json = JSON.parse(sample);
     var jscheduleList = json.scheduleList;

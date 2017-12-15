@@ -258,6 +258,9 @@ function processTimeTable(ajax){
     var weeklyTimeTables = $$("div.weeklyTimeTable");
     for(var i=0; i<weeklyTimeTables.length; i++) {
         try {
+            if (ajax.responseText === 'No Data') {
+                return;
+            }
             var json = JSON.parse(ajax.responseText);
             // var json = JSON.parse(sampleJSON);
             // var weeklyTimeTable = new WeeklyTimeTable(weeklyTimeTables[i], json.name, uDate);
