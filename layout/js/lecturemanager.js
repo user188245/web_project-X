@@ -5,6 +5,7 @@ var tempTimeList = [];
 // mode=0; neutral, mode=1; create, mode2; modify.
 var mode = 0;
 var target = 0;
+var targetID;
 
 function SendLecture(tableName,lecture) {
     this.tableName = tableName;
@@ -116,6 +117,7 @@ function modifyAdder() {
     tempTimeList = this.lecture.scheduleList;
     prepareTimeView();
     target = this.index;
+    targetID = this.lecture.id;
     var popup = $("lecture_popup");
     popup.style.setProperty("display", "block");
     mode = 2;
@@ -126,7 +128,7 @@ function reportAdder(event) {
     var name = $("lec_add_name").value;
     var instructor = $("lec_add_instructor").value;
     var homepage = $("lec_add_homepage").value;
-    var lecture = new Lecture(name,instructor,homepage,null);
+    var lecture = new Lecture(name,instructor,homepage,null,null);
     lecture.setRegularScheduleList(tempTimeList);
     var method = "N/A";
     if(mode === 1) {
@@ -134,6 +136,7 @@ function reportAdder(event) {
         method = "add";
     }
     else if(mode === 2){
+        lecture.id = targetID;
         lectureList[target] = lecture;
         method = "modify";
     }
@@ -166,7 +169,7 @@ function removeLecture(event) {
         var lecture = lectureList[index];
         lectureList.splice(index, 1);
         prepareLectureView();
-        var send = new SendLecture("N/A",lecture.name);
+        var send = new SendLecture("N/A",lecture.id);
         postData("remove",send);
     }
 }
@@ -266,6 +269,7 @@ document.observe('dom:loaded', function() {
 var sample = "{\n" +
     "  \"lectureList\": [\n" +
     "    {\n" +
+    "      \"id\": 11,\n" +
     "      \"name\": \"취침학개론\",\n" +
     "      \"instructor\": \"최드르렁\",\n" +
     "      \"scheduleList\": [\n" +
@@ -295,6 +299,7 @@ var sample = "{\n" +
     "      \"homepage\": \"http://www.durrung.hanyang.ac.kr/lec/sleep2040.html\"\n" +
     "    },\n" +
     "    {\n" +
+    "      \"id\": 12,\n" +
     "      \"name\": \"대학수면학특론\",\n" +
     "      \"instructor\": \"쿨쿨자\",\n" +
     "      \"scheduleList\": [\n" +
@@ -324,6 +329,7 @@ var sample = "{\n" +
     "      \"homepage\": \"http://www.zrg.hanyang.ac.kr/class/slp4044/2017\"\n" +
     "    },\n" +
     "    {\n" +
+    "      \"id\": 13,\n" +
     "      \"name\": \"침대세팅방법론\",\n" +
     "      \"instructor\": \"김나잇\",\n" +
     "      \"scheduleList\": [\n" +
