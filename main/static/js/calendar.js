@@ -246,8 +246,8 @@ function ajaxFaulure(ajax, exception) {
 }
 
 function initSchedules(ajax) {
-    // var json = JSON.parse(ajax.responseText);
-    var json = JSON.parse(sample);
+    var json = JSON.parse(ajax.responseText);
+    // var json = JSON.parse(sample);
     var jscheduleList = json.scheduleList;
     for(var i=1; i<=31; i++)
         scheduleList[i] = [];

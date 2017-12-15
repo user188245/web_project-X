@@ -105,6 +105,13 @@ def classtime_ajax(request):
     return HttpResponse("Invalid Request")
 
 
+def nolecture_ajax(request):
+    if request.is_ajax():
+        None
+
+    return HttpResponse("Invalid Request")
+
+
 def semester(request):
     if request.user.is_authenticated:
         semesters = Semester.objects.filter(user_id_id=request.user.user_id)
