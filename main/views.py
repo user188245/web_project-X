@@ -40,7 +40,7 @@ def classtime_ajax(request):
             else:
                 continue
         if semester_id == 0:
-            return HttpResponse("No Data")
+            return HttpResponse("")
 
         lecture_rows = Class.objects.filter(semester_id_id=current_semester.semester_id)
         # classtime_rows = ClassTime.objects.filter(class_id_id__in=lecture_rows.values('class_id'))
@@ -50,6 +50,7 @@ def classtime_ajax(request):
         lecture_list = []
         for lecture_row in lecture_rows:
             class_data = {
+                'id': lecture_row.class_id,
                 'name': lecture_row.class_name,
                 'instructor': lecture_row.professor,
                 'homepage': lecture_row.homepage
@@ -83,6 +84,7 @@ def classtime_ajax(request):
         calendar_list = []
         for calendar_row in calendar_rows:
             calendar_data = {
+                'id': calendar_row.calendar_id,
                 'name': calendar_row.title,
                 'location': calendar_row.place,
                 'text': calendar_row.text,
@@ -124,85 +126,90 @@ def nolecture_ajax(request):
                                                          start_time=start_time)[0]
             nolecture_calendar.delete()
 
-        current_weekday = date.weekday()
-        monday = date - datetime.timedelta(days=current_weekday)
-        sunday = date + datetime.timedelta(days=(6 - current_weekday))
-        # 쿼리 시작
-        semester_rows = Semester.objects.filter(user_id_id=request.user.user_id)
+        return HttpResponse('Complete.')
 
-        semester_id = 0
-        current_semester = None
-        for semester_row in semester_rows:
-            if (semester_row.start_day <= date) and (semester_row.end_day >= date):
-                semester_id = semester_row.semester_id
-                current_semester = semester_row
-                break
-            else:
-                continue
-        if semester_id == 0:
-            return HttpResponse("No Data")
-
-        lecture_rows = Class.objects.filter(semester_id_id=current_semester.semester_id)
-        # classtime_rows = ClassTime.objects.filter(class_id_id__in=lecture_rows.values('class_id'))
-        calendar_rows = Calendar.objects.filter(user_id_id=request.user.user_id, date__gte=monday, date__lte=sunday)
-
-        data = {'name': current_semester.semester_name + ' 시간표'}
-        lecture_list = []
-        for lecture_row in lecture_rows:
-            class_data = {
-                'name': lecture_row.class_name,
-                'instructor': lecture_row.professor,
-                'homepage': lecture_row.homepage
-            }
-            classtime_list = []
-            classtime_rows = ClassTime.objects.filter(class_id_id=lecture_row.class_id)
-            for classtime_row in classtime_rows:
-                classtime_data = {
-                    'startHour': classtime_row.start_time.hour,
-                    'startMinute': classtime_row.start_time.minute,
-                    'endHour': classtime_row.end_time.hour,
-                    'endMinute': classtime_row.end_time.minute,
-                    'week': classtime_row.weekday,
-                    'location': classtime_row.location,
-                }
-                nolecture_calendar = Calendar.objects.filter(
-                    class_id=classtime_row.class_id_id,
-                    start_time=classtime_row.start_time,
-                    title=lecture_row.class_name + ' 휴강'
-                )
-                if len(nolecture_calendar) == 0:
-                    classtime_data['isCanceled'] = False
-                else:
-                    classtime_data['isCanceled'] = True
-                classtime_list.append(classtime_data)
-
-            class_data['scheduleList'] = classtime_list
-            lecture_list.append(class_data)
-
-        data['lectureList'] = lecture_list
-        calendar_list = []
-        for calendar_row in calendar_rows:
-            calendar_data = {
-                'name': calendar_row.title,
-                'location': calendar_row.place,
-                'text': calendar_row.text,
-                'startHour': calendar_row.start_time.hour,
-                'startMinute': calendar_row.start_time.minute,
-                'endHour': calendar_row.end_time.hour,
-                'endMinute': calendar_row.end_time.minute
-            }
-            date_data = {
-                'year': calendar_row.date.year,
-                'month': calendar_row.date.month,
-                'day': calendar_row.date.day
-            }
-            calendar_data['date'] = date_data
-            if calendar_data['name'][-2:] != '휴강':
-                calendar_list.append(calendar_data)
-
-        data['exceptionalSchduleList'] = calendar_list
-        json = simplejson.dumps(data)
-        return HttpResponse(json)
+        # current_weekday = date.weekday()
+        # monday = date - datetime.timedelta(days=current_weekday)
+        # sunday = date + datetime.timedelta(days=(6 - current_weekday))
+        # # 쿼리 시작
+        # semester_rows = Semester.objects.filter(user_id_id=request.user.user_id)
+        #
+        # semester_id = 0
+        # current_semester = None
+        # for semester_row in semester_rows:
+        #     if (semester_row.start_day <= date) and (semester_row.end_day >= date):
+        #         semester_id = semester_row.semester_id
+        #         current_semester = semester_row
+        #         break
+        #     else:
+        #         continue
+        # if semester_id == 0:
+        #     return HttpResponse("")
+        #
+        # lecture_rows = Class.objects.filter(semester_id_id=current_semester.semester_id)
+        # # classtime_rows = ClassTime.objects.filter(class_id_id__in=lecture_rows.values('class_id'))
+        # calendar_rows = Calendar.objects.filter(user_id_id=request.user.user_id, date__gte=monday, date__lte=sunday)
+        #
+        # data = {'name': current_semester.semester_name + ' 시간표'}
+        # lecture_list = []
+        # for lecture_row in lecture_rows:
+        #     class_data = {
+        #         'id': lecture_row.class_id,
+        #         'name': lecture_row.class_name,
+        #         'instructor': lecture_row.professor,
+        #         'homepage': lecture_row.homepage
+        #     }
+        #     classtime_list = []
+        #     classtime_rows = ClassTime.objects.filter(class_id_id=lecture_row.class_id)
+        #     for classtime_row in classtime_rows:
+        #         classtime_data = {
+        #             'startHour': classtime_row.start_time.hour,
+        #             'startMinute': classtime_row.start_time.minute,
+        #             'endHour': classtime_row.end_time.hour,
+        #             'endMinute': classtime_row.end_time.minute,
+        #             'week': classtime_row.weekday,
+        #             'location': classtime_row.location,
+        #         }
+        #         nolecture_calendar = Calendar.objects.filter(
+        #             class_id=classtime_row.class_id_id,
+        #             start_time=classtime_row.start_time,
+        #             title=lecture_row.class_name + ' 휴강'
+        #         )
+        #         if len(nolecture_calendar) == 0:
+        #             classtime_data['isCanceled'] = False
+        #         else:
+        #             classtime_data['isCanceled'] = True
+        #         classtime_list.append(classtime_data)
+        #
+        #     class_data['scheduleList'] = classtime_list
+        #     lecture_list.append(class_data)
+        #
+        # data['lectureList'] = lecture_list
+        # calendar_list = []
+        # for calendar_row in calendar_rows:
+        #     calendar_data = {
+        #         'id': calendar_row.calendar_id,
+        #         'name': calendar_row.title,
+        #         'location': calendar_row.place,
+        #         'text': calendar_row.text,
+        #         'startHour': calendar_row.start_time.hour,
+        #         'startMinute': calendar_row.start_time.minute,
+        #         'endHour': calendar_row.end_time.hour,
+        #         'endMinute': calendar_row.end_time.minute
+        #     }
+        #     date_data = {
+        #         'year': calendar_row.date.year,
+        #         'month': calendar_row.date.month,
+        #         'day': calendar_row.date.day
+        #     }
+        #     calendar_data['date'] = date_data
+        #     if calendar_data['name'][-2:] != '휴강':
+        #         calendar_list.append(calendar_data)
+        #
+        # data['exceptionalSchduleList'] = calendar_list
+        # json = simplejson.dumps(data)
+        # return HttpResponse(json)
+        # # return HttpResponse('Complete.')
 
     return HttpResponse("Invalid Request")
 
@@ -248,9 +255,8 @@ def lecture(request):
 
 
 def lecture_ajax(request):
-    # global semester_id
+    global semester_id
     if request.is_ajax():
-        global semester_id
         date = datetime.datetime.now().date()
         # 쿼리 시작
         semester_rows = Semester.objects.filter(user_id_id=request.user.user_id)
@@ -261,11 +267,8 @@ def lecture_ajax(request):
             else:
                 continue
         if semester_id == 0:
-            return HttpResponse("No Data")
+            return HttpResponse("{}")
         if request.POST['method'] == 'get':
-            if semester_id == 0:
-                return HttpResponse("No Data")
-
             lecture_rows = Class.objects.filter(semester_id_id=semester_id)
             # classtime_rows = ClassTime.objects.filter(class_id_id__in=lecture_rows.values('class_id'))
 
@@ -273,6 +276,7 @@ def lecture_ajax(request):
             lecture_list = []
             for lecture_row in lecture_rows:
                 class_data = {
+                    'id': lecture_row.class_id,
                     'name': lecture_row.class_name,
                     'instructor': lecture_row.professor,
                     'homepage': lecture_row.homepage
@@ -327,11 +331,24 @@ def lecture_ajax(request):
             return HttpResponse('Complete.')
 
         if request.POST['method'] == 'modify':
-            return HttpResponse('Soon.')
+            data = simplejson.loads(request.POST['data'])
+            lecture_info = data['lecture']
+            # 수업시간 변경까지는 아직 구현 못함
+            # scheduleList = lecture_info['scheduleList']
+            # start_time = datetime.datetime.strptime(str(time['start_hour']) + ":" + str(time['start_min']), '%H:%M')
+            # end_time = datetime.datetime.strptime(str(time['end_hour']) + ":" + str(time['end_min']), '%H:%M')
+
+            saved_class = Class.objects.filter(class_id=lecture_info['id'])[0]
+            saved_class.class_name = lecture_info['name']
+            saved_class.professor = lecture_info['instructor']
+            saved_class.homepage = lecture_info['homepage']
+
+            saved_class.save()
+            return HttpResponse('Complete.')
 
         if request.POST['method'] == 'remove':
             data = simplejson.loads(request.POST['data'])
-            saved_lecture = Class.objects.filter(class_name=data['lecture'])[0]
+            saved_lecture = Class.objects.filter(class_id=data['lecture'])[0]
             saved_lecture.delete()
             return HttpResponse('Complete.')
 
@@ -353,25 +370,13 @@ def calendar_ajax(request):
             data = simplejson.loads(request.POST['data'])
             date = datetime.datetime.strptime(data['date'], '%Y-%m-%d').date()
             # 쿼리 시작
-            semester_rows = Semester.objects.filter(user_id_id=request.user.user_id)
-            semester_id = 0
-            current_semester = None
-            for semester_row in semester_rows:
-                if (semester_row.start_day <= date) and (semester_row.end_day >= date):
-                    semester_id = semester_row.semester_id
-                    current_semester = semester_row
-                    break
-                else:
-                    continue
-            if semester_id == 0:
-                return HttpResponse("No Data")
-
             calendar_rows = Calendar.objects.filter(user_id_id=request.user.user_id)
 
             data = {}
             calendar_list = []
             for calendar_row in calendar_rows:
                 calendar_data = {
+                    'id': calendar_row.calendar_id,
                     'name': calendar_row.title,
                     'location': calendar_row.place,
                     'text': calendar_row.text,
@@ -405,7 +410,8 @@ def calendar_ajax(request):
             start_time = datetime.datetime.strptime(str(time['start_hour']) + ":" + str(time['start_min']), '%H:%M')
             end_time = datetime.datetime.strptime(str(time['end_hour']) + ":" + str(time['end_min']), '%H:%M')
 
-            saved_calendar = Calendar.objects.filter(title=schedule['name'])[0]
+            saved_calendar = Calendar.objects.filter(calendar_id=schedule['id'])[0]
+            saved_calendar.title = schedule['name']
             saved_calendar.date = schedule['date']
             saved_calendar.text = schedule['text']
             saved_calendar.place = schedule['location']
@@ -417,7 +423,7 @@ def calendar_ajax(request):
 
         elif request.POST['method'] == 'remove':
             data = simplejson.loads(request.POST['data'])
-            saved_calendar = Calendar.objects.filter(title=data['schedule'])[0]
+            saved_calendar = Calendar.objects.filter(calendar_id=data['schedule'])[0]
             saved_calendar.delete()
             return HttpResponse('Complete.')
 

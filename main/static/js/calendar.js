@@ -5,6 +5,7 @@ var currentDate;
 // mode=0; neutral, mode=1; create, mode2; modify.
 var mode = 0;
 var target;
+var targetID;
 
 var scheduleList = [];
 
@@ -160,6 +161,7 @@ function modifyAdder() {
     $("s_add_timeStart").value = this.schedule.scheduleTime.getStart();
     $("s_add_timeEnd").value = this.schedule.scheduleTime.getEnd();
     target = this.index;
+    targetID = this.schedule.id;
     var popup = $("s_popup");
     popup.style.setProperty("display", "block");
     mode = 2;
@@ -174,7 +176,7 @@ function reportAdder(event) {
     var startMinute = $("s_add_timeStart").valueAsDate.getMinutes();
     var endHour = $("s_add_timeEnd").valueAsDate.getUTCHours();
     var endMinute = $("s_add_timeEnd").valueAsDate.getMinutes();
-    var schedule = new IrregularSchedule(name,location,text,new ScheduleTime(startHour,startMinute,endHour,endMinute),currentDate.toISOString(),null);
+    var schedule = new IrregularSchedule(name,location,text,new ScheduleTime(startHour,startMinute,endHour,endMinute),currentDate.toISOString(),null,null);
 
     var method = "N/A";
     if(mode === 1) {
@@ -182,6 +184,7 @@ function reportAdder(event) {
         method = "add";
     }
     else if(mode === 2){
+        schedule.id = targetID;
         scheduleList[currentDate.getDate()][target] = schedule;
         method = "modify";
     }
@@ -198,9 +201,8 @@ function removeSchedule(event) {
         var schedule = scheduleList[currentDate.getDate()][this.index];
         scheduleList[currentDate.getDate()].splice(this.index, 1);
         prepareScheduleView();
-        var send = new SendSchedule("N/A",schedule.name,null);
+        var send = new SendSchedule("N/A",schedule.id,null);
         postData("remove",send);
-
         makeCalendar(currentDate);
     }
 }
@@ -214,7 +216,8 @@ function postData(method,data) {
         onSuccess: postSuccess,
         onFailure: ajaxFaulure,
         onException: ajaxFaulure
-    })
+    });
+    // $("testing").innerText = param;
 
 }
 
@@ -224,7 +227,6 @@ function postSuccess(ajax) {
 
 function init(){
     var data = new SendSchedule("N/A",null,currentDate.toISOString());
-
     var param = "csrfmiddlewaretoken=" + csrftoken + "&method=" + "get" +"&data=" + JSON.stringify(data);
 
     new Ajax.Request("get/", {
@@ -233,7 +235,8 @@ function init(){
         onSuccess: initSchedules,
         onFailure: ajaxFaulure,
         onException: ajaxFaulure
-    })
+    });
+    // $("testing").innerText = param;
 }
 
 function ajaxFaulure(ajax, exception) {
@@ -251,10 +254,14 @@ function initSchedules(ajax) {
         scheduleList[i] = [];
     for(var i=0; i<jscheduleList.length; i++){
         var s = jscheduleList[i];
-        var schedule = new IrregularSchedule(s.name,s.location,s.text,new ScheduleTime(s.startHour,s.startMinute,s.endHour,s.endMinute),new Date(s.date),null);
+        var schedule = new IrregularSchedule(s.name,s.location,s.text,new ScheduleTime(s.startHour,s.startMinute,s.endHour,s.endMinute),new Date(s.date),null,s.id);
         scheduleList[schedule.date.getDate()].push(schedule);
     }
 }
+
+
+
+
 
 
 
@@ -284,6 +291,7 @@ document.observe('dom:loaded', function() {
 var sample = "{\n" +
     "  \"scheduleList\": [\n" +
     "    {\n" +
+    "      \"id\": 0,\n" +
     "      \"name\": \"임시일정0\",\n" +
     "      \"location\": \"장소0\",\n" +
     "      \"startHour\": 10,\n" +
@@ -294,6 +302,7 @@ var sample = "{\n" +
     "      \"text\": \"메모0\"\n" +
     "    },\n" +
     "    {\n" +
+    "      \"id\": 1,\n" +
     "      \"name\": \"임시일정1\",\n" +
     "      \"location\": \"장소1\",\n" +
     "      \"startHour\": 13,\n" +
@@ -304,6 +313,7 @@ var sample = "{\n" +
     "      \"text\": \"메모1\"\n" +
     "    },\n" +
     "    {\n" +
+    "      \"id\": 2,\n" +
     "      \"name\": \"임시일정2\",\n" +
     "      \"location\": \"장소3\",\n" +
     "      \"startHour\": 11,\n" +
@@ -314,6 +324,7 @@ var sample = "{\n" +
     "      \"text\": \"메모2\"\n" +
     "    },\n" +
     "    {\n" +
+    "      \"id\": 3,\n" +
     "      \"name\": \"임시일정3\",\n" +
     "      \"location\": \"장소4\",\n" +
     "      \"startHour\": 18,\n" +

@@ -206,6 +206,7 @@ var rectOnClickIrregularEvent = function(){
 function ajax_TimeTable(data){
     uDate = new Date(data.date);
     var param = "csrfmiddlewaretoken=" + csrftoken + "&data=" + JSON.stringify(data);
+
     new Ajax.Request("get/", {
         method: "post",
         parameters: param,
@@ -230,6 +231,8 @@ function ajax_alterInactivation(data) {
         onFailure: ajaxFaulure,
         onException: ajaxFaulure
     });
+
+    // alert(param);
 }
 
 function alterInactivation(ajax) {
@@ -258,18 +261,15 @@ function processTimeTable(ajax){
     var weeklyTimeTables = $$("div.weeklyTimeTable");
     for(var i=0; i<weeklyTimeTables.length; i++) {
         try {
-            if (ajax.responseText === 'No Data') {
-                return;
-            }
             var json = JSON.parse(ajax.responseText);
             // var json = JSON.parse(sampleJSON);
-            // var weeklyTimeTable = new WeeklyTimeTable(weeklyTimeTables[i], json.name, uDate);
+            //var weeklyTimeTable = new WeeklyTimeTable(weeklyTimeTables[i], json.name, uDate);
             var weeklyTimeTable = uTimeTable[i];
             weeklyTimeTable.clear();
 
             for(var i=0; i<json.lectureList.length; i++){
                 var jlec = json.lectureList[i];
-                var lec = new Lecture(jlec.name,jlec.instructor,jlec.homepage,createRandomColor());
+                var lec = new Lecture(jlec.name,jlec.instructor,jlec.homepage,createRandomColor(), null);
                 for(var j=0; j < jlec.scheduleList.length; j++){
                     var jsch = jlec.scheduleList[j];
                     lec.addRegularScheduleCustom(jsch.startHour,jsch.startMinute,jsch.endHour,jsch.endMinute,jsch.week,jsch.location,jsch.isCanceled,lec);
@@ -278,7 +278,7 @@ function processTimeTable(ajax){
             }
             for(var j=0; j < json.exceptionalSchduleList.length; j++){
                 var jex = json.exceptionalSchduleList[j];
-                weeklyTimeTable.exceptionalList.push(new IrregularSchedule(jex.name,jex.location,jex.text,new ScheduleTime(jex.startHour,jex.startMinute,jex.endHour,jex.endMinute),new Date(jex.date.year,jex.date.month-1,jex.date.day,0,0,0,0),createRandomColor()));
+                weeklyTimeTable.exceptionalList.push(new IrregularSchedule(jex.name,jex.location,jex.text,new ScheduleTime(jex.startHour,jex.startMinute,jex.endHour,jex.endMinute),new Date(jex.date.year,jex.date.month-1,jex.date.day,0,0,0,0),createRandomColor(),null));
             }
             weeklyTimeTable.onCreate(json.name,9, 20, 60, uDate);
         }catch(err){
@@ -307,6 +307,7 @@ var sampleJSON = "{\n" +
     "  \"name\": \"1학기 시간표\",\n" +
     "  \"lectureList\": [\n" +
     "    {\n" +
+    "      \"id\": \"2\",\n" +
     "      \"name\": \"취침학개론\",\n" +
     "      \"instructor\": \"최드르렁\",\n" +
     "      \"homepage\":\"http://www.durrung.hanyang.ac.kr/lec/sleep2040.html\",\n" +
@@ -332,6 +333,7 @@ var sampleJSON = "{\n" +
     "      ]\n" +
     "    },\n" +
     "    {\n" +
+    "      \"id\": \"3\",\n" +
     "      \"name\": \"대학수면학특론\",\n" +
     "      \"instructor\": \"쿨쿨자\",\n" +
     "      \"homepage\":\"http://www.zrg.hanyang.ac.kr/class/slp4044/2017\",\n" +
@@ -359,6 +361,7 @@ var sampleJSON = "{\n" +
     "  ],\n" +
     "  \"exceptionalSchduleList\": [\n" +
     "    {\n" +
+    "      \"id\": \"100\",\n" +
     "      \"name\": \"현대꿈해석학 초청강사특강\",\n" +
     "      \"location\": \"컨퍼런슬립홀 중강당\",\n" +
     "      \"text\": \"특별 초청 강의, 다 듣고 마지막에 상품권 추첨하는거 잊지 않기\",\n" +

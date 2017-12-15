@@ -85,14 +85,16 @@ ScheduleTime.prototype = {
     }
 };
 
-function Lecture(name,instructor,homepage,separatingColor){
+function Lecture(name,instructor,homepage,separatingColor,id){
     this.name = name;
     this.instructor = instructor;
     this.homepage = homepage;
     this.separatingColor = separatingColor; // WARNNING!! this is private field, do not refer this value.;
     this.scheduleList = [];
+    this.id = id;
     this.toJSON = function() {
         return {
+            "id": this.id,
             "name": this.name,
             "instructor": this.instructor,
             "homepage": this.homepage,
@@ -138,15 +140,17 @@ RegularSchedule.prototype = {
 };
 
 
-function IrregularSchedule(name,location,text,scheduleTime,date,saperatingColor){
+function IrregularSchedule(name,location,text,scheduleTime,date,saperatingColor,id){
     this.name = name;
     this.location = location;
     this.text = text;
     this.scheduleTime = scheduleTime;
     this.date = date;
     this.saperatingColor = saperatingColor;
+    this.id = id;
     this.toJSON = function() {
         return {
+            "id":this.id,
             "name": this.name,
             "location": this.location,
             "text": this.text,
