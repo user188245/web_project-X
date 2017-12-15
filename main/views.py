@@ -20,10 +20,109 @@ def classtime(request):
 
 
 def classtime_ajax(request):
-    global semester_id
+    global semester_id, monday
     if request.is_ajax():
         data = simplejson.loads(request.POST['data'])
         date = datetime.datetime.strptime(data['date'], '%Y-%m-%d').date()
+        current_weekday = date.weekday()
+        monday = date - datetime.timedelta(days=current_weekday)
+        sunday = date + datetime.timedelta(days=(6 - current_weekday))
+        # 쿼리 시작
+        semester_rows = Semester.objects.filter(user_id_id=request.user.user_id)
+
+        semester_id = 0
+        current_semester = None
+        for semester_row in semester_rows:
+            if (semester_row.start_day <= date) and (semester_row.end_day >= date):
+                semester_id = semester_row.semester_id
+                current_semester = semester_row
+                break
+            else:
+                continue
+        if semester_id == 0:
+            return HttpResponse("No Data")
+
+        lecture_rows = Class.objects.filter(semester_id_id=current_semester.semester_id)
+        # classtime_rows = ClassTime.objects.filter(class_id_id__in=lecture_rows.values('class_id'))
+        calendar_rows = Calendar.objects.filter(user_id_id=request.user.user_id, date__gte=monday, date__lte=sunday)
+
+        data = {'name': current_semester.semester_name + ' 시간표'}
+        lecture_list = []
+        for lecture_row in lecture_rows:
+            class_data = {
+                'name': lecture_row.class_name,
+                'instructor': lecture_row.professor,
+                'homepage': lecture_row.homepage
+            }
+            classtime_list = []
+            classtime_rows = ClassTime.objects.filter(class_id_id=lecture_row.class_id)
+            for classtime_row in classtime_rows:
+                classtime_data = {
+                    'startHour': classtime_row.start_time.hour,
+                    'startMinute': classtime_row.start_time.minute,
+                    'endHour': classtime_row.end_time.hour,
+                    'endMinute': classtime_row.end_time.minute,
+                    'week': classtime_row.weekday,
+                    'location': classtime_row.location,
+                }
+                nolecture_calendar = Calendar.objects.filter(
+                    start_time=classtime_row.start_time,
+                    title=lecture_row.class_name + ' 휴강'
+                )
+                if len(nolecture_calendar) == 0:
+                    classtime_data['isCanceled'] = False
+                else:
+                    classtime_data['isCanceled'] = True
+                classtime_list.append(classtime_data)
+
+            class_data['scheduleList'] = classtime_list
+            lecture_list.append(class_data)
+
+        data['lectureList'] = lecture_list
+        calendar_list = []
+        for calendar_row in calendar_rows:
+            calendar_data = {
+                'name': calendar_row.title,
+                'location': calendar_row.place,
+                'text': calendar_row.text,
+                'startHour': calendar_row.start_time.hour,
+                'startMinute': calendar_row.start_time.minute,
+                'endHour': calendar_row.end_time.hour,
+                'endMinute': calendar_row.end_time.minute
+            }
+            date_data = {
+                'year': calendar_row.date.year,
+                'month': calendar_row.date.month,
+                'day': calendar_row.date.day
+            }
+            calendar_data['date'] = date_data
+            if calendar_data['name'][-2:] != '휴강':
+                calendar_list.append(calendar_data)
+
+        data['exceptionalSchduleList'] = calendar_list
+        json = simplejson.dumps(data)
+        return HttpResponse(json)
+    return HttpResponse("Invalid Request")
+
+
+def nolecture_ajax(request):
+    global monday
+    if request.is_ajax():
+        data = simplejson.loads(request.POST['data'])
+        schedule = data['schedule']
+        time = schedule['scheduleTime']
+        start_time = datetime.datetime.strptime(str(time['start_hour']) + ":" + str(time['start_min']), '%H:%M')
+        end_time = datetime.datetime.strptime(str(time['end_hour']) + ":" + str(time['end_min']), '%H:%M')
+        date = monday + datetime.timedelta(days=schedule['week'])
+        if data['isInactive'] is False:
+            new_calendar = Calendar(date=date, title=data['name'] + ' 휴강', place=schedule['location'],
+                                    start_time=start_time, end_time=end_time, user_id_id=request.user.user_id)
+            new_calendar.save()
+        else:
+            nolecture_calendar = Calendar.objects.filter(date=date, title=data['name'] + ' 휴강',
+                                                         start_time=start_time)[0]
+            nolecture_calendar.delete()
+
         current_weekday = date.weekday()
         monday = date - datetime.timedelta(days=current_weekday)
         sunday = date + datetime.timedelta(days=(6 - current_weekday))
@@ -97,17 +196,14 @@ def classtime_ajax(request):
                 'day': calendar_row.date.day
             }
             calendar_data['date'] = date_data
-            calendar_list.append(calendar_data)
+            if calendar_data['name'][-2:] != '휴강':
+                calendar_list.append(calendar_data)
 
         data['exceptionalSchduleList'] = calendar_list
         json = simplejson.dumps(data)
         return HttpResponse(json)
+
     return HttpResponse("Invalid Request")
-
-
-def nolecture_ajax(request):
-    if request.is_ajax():
-        return HttpResponse("Invalid Request")
 
 
 def semester(request):
