@@ -8,6 +8,7 @@
     <h1>학기 목록</h1>
     <div>
         <a href="{% url 'create_semester' %}"><input type="submit" name="submit" value="학기 추가" /></a>
+        <a href="{% url 'classtime' %}"><input type="submit" name="submit" value="시간표" /></a>
     </div>
     {% for semester in semesters %}
     <div class="post">
