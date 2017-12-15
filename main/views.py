@@ -107,9 +107,7 @@ def classtime_ajax(request):
 
 def nolecture_ajax(request):
     if request.is_ajax():
-        None
-
-    return HttpResponse("Invalid Request")
+        return HttpResponse("Invalid Request")
 
 
 def semester(request):
