@@ -24,7 +24,7 @@
 	{% endif %}
 
 	<!--로그인 폼-->
-	<h1> Please, log in </h1>
+	<header><h1> Please, log in </h1></header>
 	<form method="post" action="{% url 'signin' %}"> {% csrf_token %}
 		<div id="login">
 			{{ signinform.as_p }}
