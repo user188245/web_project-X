@@ -11,7 +11,7 @@
     </div>
     {% for semester in semesters %}
     <div class="post">
-        <p>{{ semester.semester_name }}</p>
+        <p>{{ semester.semester_name }} [{{ semester.start_day }} - {{ semester.end_day }}]</p>
     </div>
     {% endfor %}
 </body>
